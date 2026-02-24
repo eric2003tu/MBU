@@ -52,32 +52,10 @@ export default function HomePage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.7, delay: 0.4 }}
-                        className="flex justify-center"
+                        className="hidden md:flex justify-center"
                     >
                         <SearchBar />
                     </motion.div>
-                </div>
-            </section>
-
-            {/* Stats */}
-            <section className="py-16 bg-secondary">
-                <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        {stats.map((stat, i) => (
-                            <motion.div
-                                key={stat.label}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="text-center"
-                            >
-                                <stat.icon className="h-8 w-8 text-accent mx-auto mb-3" />
-                                <div className="font-display text-3xl font-bold text-foreground">{stat.value}</div>
-                                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-                            </motion.div>
-                        ))}
-                    </div>
                 </div>
             </section>
 
@@ -108,6 +86,28 @@ export default function HomePage() {
                                 View All Properties <ArrowRight className="h-4 w-4" />
                             </Button>
                         </Link>
+                    </div>
+                </div>
+            </section>
+
+                        {/* Stats */}
+            <section className="py-16 bg-secondary">
+                <div className="container mx-auto px-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                        {stats.map((stat, i) => (
+                            <motion.div
+                                key={stat.label}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1 }}
+                                className="text-center"
+                            >
+                                <stat.icon className="h-8 w-8 text-accent mx-auto mb-3" />
+                                <div className="font-display text-3xl font-bold text-foreground">{stat.value}</div>
+                                <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
             </section>

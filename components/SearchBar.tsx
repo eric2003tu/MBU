@@ -31,7 +31,7 @@ const SearchBar = () => {
                     className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none w-full"
                 />
             </div>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 md:w-40">
+            <div className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 md:w-40">
                 <Home className="h-4 w-4 text-accent shrink-0" />
                 <select
                     value={type}
@@ -43,7 +43,7 @@ const SearchBar = () => {
                     <option value="rent">Rent</option>
                 </select>
             </div>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 md:w-44">
+            <div className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg bg-muted/50 md:w-44">
                 <DollarSign className="h-4 w-4 text-accent shrink-0" />
                 <select
                     value={maxPrice}
