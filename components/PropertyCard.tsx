@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Bed, Bath, Maximize, Heart } from "lucide-react";
+import { MapPin, Bed, Bath, Maximize, Heart, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Property } from "@/lib/data/properties";
 
@@ -70,8 +70,11 @@ const PropertyCard = ({ property, index = 0 }: PropertyCardProps) => {
                                 <span>{property.area.toLocaleString()} sqft</span>
                             </div>
                         </div>
-                        <div className="border-t border-border pt-3">
+                        <div className="border-t border-border pt-3 flex items-center justify-between gap-2">
                             <span className="font-display text-xl font-bold text-accent">{property.priceLabel}</span>
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-accent bg-accent/10 hover:bg-accent hover:text-accent-foreground px-3 py-1.5 rounded-full transition-colors duration-200">
+                                View Details <ArrowRight className="h-3 w-3" />
+                            </span>
                         </div>
                     </div>
                 </div>
