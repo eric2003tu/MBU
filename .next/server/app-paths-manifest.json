@@ -1,7 +1,9 @@
 {
-  "/property/[id]/page": "app/property/[id]/page.js",
-  "/properties/page": "app/properties/page.js",
-  "/page": "app/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/login/page": "app/login/page.js",
-  "/signup/page": "app/signup/page.js"
+  "/signup/page": "app/signup/page.js",
+  "/properties/page": "app/properties/page.js",
+  "/property/[id]/page": "app/property/[id]/page.js",
+  "/verify-otp/page": "app/verify-otp/page.js",
+  "/page": "app/page.js"
 }

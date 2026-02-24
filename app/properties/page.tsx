@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
@@ -9,7 +10,7 @@ import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import { properties, type PropertyType, type PropertyCategory } from "@/lib/data/properties";
 
-export default function PropertiesPage() {
+function PropertiesContent() {
     const searchParams = useSearchParams();
     const [showFilters, setShowFilters] = useState(false);
     const [typeFilter, setTypeFilter] = useState<PropertyType | "">(
@@ -152,5 +153,17 @@ export default function PropertiesPage() {
 
             <Footer />
         </div>
+    );
+}
+
+export default function PropertiesPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="h-8 w-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+            </div>
+        }>
+            <PropertiesContent />
+        </Suspense>
     );
 }

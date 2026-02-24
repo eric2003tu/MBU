@@ -1,0 +1,21 @@
+1:"$Sreact.fragment"
+2:I[1598,["545","static/chunks/545-dd3e42aeede34cf0.js","151","static/chunks/151-48fddc68b37e70ee.js","177","static/chunks/app/layout-b010fd79c819be75.js"],"default"]
+3:I[9766,[],""]
+4:I[8924,[],""]
+5:I[2619,["619","static/chunks/619-f09bc47e24909021.js","345","static/chunks/app/not-found-0fb6fd984b71a329.js"],""]
+6:I[1959,[],"ClientPageRoot"]
+7:I[5759,["545","static/chunks/545-dd3e42aeede34cf0.js","619","static/chunks/619-f09bc47e24909021.js","308","static/chunks/308-adb75fbb261f8bde.js","952","static/chunks/952-8e3b3ae5ffca5464.js","974","static/chunks/app/page-5f738ecddc408616.js"],"default"]
+a:I[4431,[],"OutletBoundary"]
+c:I[5278,[],"AsyncMetadataOutlet"]
+e:I[4431,[],"ViewportBoundary"]
+10:I[4431,[],"MetadataBoundary"]
+11:"$Sreact.suspense"
+13:I[7150,[],""]
+:HL["/_next/static/css/169ad80633e5aaa1.css","style"]
+0:{"P":null,"b":"4QuAuPqfdgRb1znOd2Hyx","p":"","c":["",""],"i":false,"f":[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/169ad80633e5aaa1.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"en","children":["$","body",null,{"children":["$","$L2",null,{"children":["$","$L3",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L4",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","div",null,{"className":"min-h-screen bg-background flex flex-col items-center justify-center text-center px-4","children":[["$","h1",null,{"className":"font-display text-6xl font-bold text-foreground mb-4","children":"404"}],["$","h2",null,{"className":"font-display text-2xl font-semibold text-foreground mb-2","children":"Page Not Found"}],["$","p",null,{"className":"text-muted-foreground mb-8 max-w-md","children":"The page you're looking for doesn't exist or has been moved."}],["$","div",null,{"className":"flex gap-4","children":[["$","$L5",null,{"href":"/","children":["$","button",null,{"className":"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2","ref":"$undefined","children":"Go Home"}]}],["$","$L5",null,{"href":"/properties","children":["$","button",null,{"className":"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2","ref":"$undefined","children":"Browse Properties"}]}]]}]]}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]}]}]]}],{"children":["__PAGE__",["$","$1","c",{"children":[["$","$L6",null,{"Component":"$7","searchParams":{},"params":{},"promises":["$@8","$@9"]}],null,["$","$La",null,{"children":["$Lb",["$","$Lc",null,{"promise":"$@d"}]]}]]}],{},null,false]},null,false],["$","$1","h",{"children":[null,[["$","$Le",null,{"children":"$Lf"}],null],["$","$L10",null,{"children":["$","div",null,{"hidden":true,"children":["$","$11",null,{"fallback":null,"children":"$L12"}]}]}]]}],false]],"m":"$undefined","G":["$13",[]],"s":false,"S":true}
+8:{}
+9:"$0:f:0:1:2:children:1:props:children:0:props:params"
+f:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+b:null
+d:{"metadata":[["$","title","0",{"children":"EstateVue – Find Your Dream Property"}],["$","meta","1",{"name":"description","content":"Discover exceptional homes and commercial spaces. Whether you're buying, renting, or investing — we make it effortless."}]],"error":null,"digest":"$undefined"}
+12:"$d:metadata"
