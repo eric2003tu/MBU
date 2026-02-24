@@ -51,7 +51,7 @@ export default function TenantSidebar() {
             </div>
 
             {/* User avatar */}
-            <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100 shrink-0">
+            {/* <div className="flex items-center gap-3 px-4 py-5 border-b border-gray-100 shrink-0">
                 <div className="h-10 w-10 rounded-full bg-[hsl(35,85%,55%)]/10 border-2 border-[hsl(35,85%,55%)]/30 flex items-center justify-center text-[hsl(35,85%,55%)] font-bold text-sm shrink-0">
                     {initials}
                 </div>
@@ -61,7 +61,7 @@ export default function TenantSidebar() {
                     </p>
                     <p className="text-gray-400 text-xs truncate">{user?.email ?? ""}</p>
                 </div>
-            </div>
+            </div> */}
 
             {/* Navigation */}
             <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">

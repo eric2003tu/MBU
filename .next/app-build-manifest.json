@@ -55,6 +55,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/tenant/profile/page.js"
+    ],
+    "/tenant/become-landlord/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tenant/become-landlord/page.js"
     ]
   }
 }

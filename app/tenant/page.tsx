@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
 import {
     Calendar,
@@ -12,6 +12,8 @@ import {
     Clock,
     CheckCircle2,
     AlertCircle,
+    Building2,
+    ChevronRight,
 } from "lucide-react";
 import TenantHeader from "./components/TenantHeader";
 
@@ -93,9 +95,9 @@ const container = {
     },
 };
 
-const fadeUp = {
+const fadeUp: Variants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" as const } },
 };
 
 export default function TenantDashboardPage() {
@@ -108,6 +110,39 @@ export default function TenantDashboardPage() {
             <TenantHeader title="Dashboard" subtitle={`${greeting}! Here's an overview of your tenancy.`} />
 
             <div className="p-6 max-w-7xl mx-auto space-y-8">
+                {/* Become a Landlord CTA */}
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="relative overflow-hidden rounded-2xl bg-white p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md border border-gray-200"
+                >
+                    {/* Decorative accent blob */}
+                    <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-[hsl(35,85%,55%)]/8 pointer-events-none" />
+                    <div className="absolute -bottom-8 right-24 h-24 w-24 rounded-full bg-[hsl(35,85%,55%)]/6 pointer-events-none" />
+
+                    <div className="flex items-center gap-4 relative z-10">
+                        <div className="h-12 w-12 rounded-xl bg-[hsl(35,85%,55%)]/15 border border-[hsl(35,85%,55%)]/30 flex items-center justify-center shrink-0">
+                            <Building2 className="h-6 w-6 text-[hsl(35,85%,55%)]" />
+                        </div>
+                        <div>
+                            <p className="text-gray-900 font-display font-semibold text-base leading-tight">
+                                Want to list your own property?
+                            </p>
+                            <p className="text-gray-500 text-sm mt-0.5">
+                                Apply to become a landlord and start earning from your properties.
+                            </p>
+                        </div>
+                    </div>
+
+                    <Link
+                        href="/tenant/become-landlord"
+                        className="relative z-10 flex items-center gap-2 shrink-0 bg-[hsl(35,85%,55%)] text-white font-semibold text-sm px-5 py-2.5 rounded-xl hover:brightness-110 transition-all shadow-sm"
+                    >
+                        Apply Now <ChevronRight className="h-4 w-4" />
+                    </Link>
+                </motion.div>
+
                 {/* Stats Grid */}
                 <motion.div
                     variants={container}
