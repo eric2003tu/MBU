@@ -41,7 +41,7 @@ export default function LandlordProfilePage() {
         <div>
             <LandlordHeader title="Profile" subtitle="Manage your landlord account details" />
 
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 mx-auto space-y-6">
                 {/* Profile card */}
                 <motion.div
                     variants={fadeUp}
