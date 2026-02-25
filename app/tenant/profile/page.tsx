@@ -36,7 +36,7 @@ export default function ProfilePage() {
         <div>
             <TenantHeader title="My Profile" subtitle="Manage your personal information and settings" />
 
-            <div className="p-6 max-w-3xl mx-auto space-y-6">
+            <div className="p-6 mx-auto space-y-6">
                 {/* Avatar section */}
                 <motion.div
                     initial={{ opacity: 0, y: 14 }}

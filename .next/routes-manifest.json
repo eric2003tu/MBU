@@ -1,1 +1,144 @@
-{"version":3,"caseSensitive":false,"basePath":"","rewrites":{"beforeFiles":[],"afterFiles":[],"fallback":[]},"redirects":[{"source":"/:path+/","destination":"/:path+","permanent":true,"internal":true,"regex":"^(?:\\/((?:[^\\/]+?)(?:\\/(?:[^\\/]+?))*))\\/$"}],"headers":[]}
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/property/[id]",
+      "regex": "^/property/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/property/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/tenant/bookings/[id]",
+      "regex": "^/tenant/bookings/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/tenant/bookings/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/tenant/leases/[id]",
+      "regex": "^/tenant/leases/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/tenant/leases/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    },
+    {
+      "page": "/properties",
+      "regex": "^/properties(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/properties(?:/)?$"
+    },
+    {
+      "page": "/signup",
+      "regex": "^/signup(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/signup(?:/)?$"
+    },
+    {
+      "page": "/tenant",
+      "regex": "^/tenant(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tenant(?:/)?$"
+    },
+    {
+      "page": "/tenant/become-landlord",
+      "regex": "^/tenant/become\\-landlord(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tenant/become\\-landlord(?:/)?$"
+    },
+    {
+      "page": "/tenant/bookings",
+      "regex": "^/tenant/bookings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tenant/bookings(?:/)?$"
+    },
+    {
+      "page": "/tenant/browse",
+      "regex": "^/tenant/browse(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tenant/browse(?:/)?$"
+    },
+    {
+      "page": "/tenant/leases",
+      "regex": "^/tenant/leases(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tenant/leases(?:/)?$"
+    },
+    {
+      "page": "/tenant/payments",
+      "regex": "^/tenant/payments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tenant/payments(?:/)?$"
+    },
+    {
+      "page": "/tenant/profile",
+      "regex": "^/tenant/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tenant/profile(?:/)?$"
+    },
+    {
+      "page": "/verify-otp",
+      "regex": "^/verify\\-otp(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/verify\\-otp(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

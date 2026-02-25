@@ -55,7 +55,7 @@ const fadeUp = {
     show: (i: number) => ({
         opacity: 1,
         y: 0,
-        transition: { duration: 0.4, delay: i * 0.07, ease: "easeOut" },
+        transition: { duration: 0.4, delay: i * 0.07, ease: "easeOut" as const },
     }),
 };
 
@@ -68,7 +68,7 @@ export default function BookingsPage() {
         <div>
             <TenantHeader title="My Bookings" subtitle="Manage your short-term rental bookings" />
 
-            <div className="p-6 max-w-5xl mx-auto space-y-6">
+            <div className="p-6  mx-auto space-y-6">
                 {/* Summary pills */}
                 <div className="flex flex-wrap gap-3">
                     {(["All", "CONFIRMED", "PENDING", "CANCELLED"] as const).map((s) => {
@@ -77,12 +77,12 @@ export default function BookingsPage() {
                             <div
                                 key={s}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium ${s === "All"
-                                        ? "bg-primary text-primary-foreground border-primary"
-                                        : s === "CONFIRMED"
-                                            ? "border-green-200 text-green-700 bg-green-50"
-                                            : s === "PENDING"
-                                                ? "border-amber-200 text-amber-700 bg-amber-50"
-                                                : "border-red-200 text-red-700 bg-red-50"
+                                    ? "bg-primary text-primary-foreground border-primary"
+                                    : s === "CONFIRMED"
+                                        ? "border-green-200 text-green-700 bg-green-50"
+                                        : s === "PENDING"
+                                            ? "border-amber-200 text-amber-700 bg-amber-50"
+                                            : "border-red-200 text-red-700 bg-red-50"
                                     }`}
                             >
                                 <span>{s === "All" ? "All" : statusConfig[s].label}</span>

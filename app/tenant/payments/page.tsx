@@ -37,7 +37,7 @@ const typeColors: Record<string, string> = {
 
 const fadeUp = {
     hidden: { opacity: 0, y: 12 },
-    show: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.35, delay: i * 0.06, ease: "easeOut" } }),
+    show: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.35, delay: i * 0.06, ease: "easeOut" as const } }),
 };
 
 export default function PaymentsPage() {
@@ -52,7 +52,7 @@ export default function PaymentsPage() {
         <div>
             <TenantHeader title="Payments" subtitle="Track all your rental payments" />
 
-            <div className="p-6 max-w-4xl mx-auto space-y-6">
+            <div className="p-6 mx-auto space-y-6">
                 {/* Summary cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="glass-card rounded-2xl p-5 flex items-center gap-4">
@@ -91,8 +91,8 @@ export default function PaymentsPage() {
                             key={s}
                             onClick={() => setFilter(s)}
                             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${filter === s
-                                    ? "bg-accent text-accent-foreground border-accent shadow-sm"
-                                    : "bg-secondary border-border/50 text-muted-foreground hover:border-accent/40 hover:text-foreground"
+                                ? "bg-accent text-accent-foreground border-accent shadow-sm"
+                                : "bg-secondary border-border/50 text-muted-foreground hover:border-accent/40 hover:text-foreground"
                                 }`}
                         >
                             {s === "ALL" ? "All" : s.charAt(0) + s.slice(1).toLowerCase()}

@@ -208,7 +208,7 @@ export default function BecomeLandlordPage() {
         <div>
             <TenantHeader title="Become a Landlord" subtitle="Fill in the details below to submit your application." />
 
-            <div className="p-6 max-w-2xl mx-auto space-y-8">
+            <div className="p-6 mx-auto space-y-8">
                 {/* Step Progress */}
                 <div className="flex items-center gap-2">
                     {steps.map((label, i) => (

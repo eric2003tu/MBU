@@ -58,7 +58,7 @@ const fadeUp = {
     hidden: { opacity: 0, y: 14 },
     show: (i: number) => ({
         opacity: 1, y: 0,
-        transition: { duration: 0.4, delay: i * 0.08, ease: "easeOut" },
+        transition: { duration: 0.4, delay: i * 0.08, ease: "easeOut" as const },
     }),
 };
 
@@ -67,7 +67,7 @@ export default function LeasesPage() {
         <div>
             <TenantHeader title="My Leases" subtitle="Track your long-term rental agreements" />
 
-            <div className="p-6 max-w-5xl mx-auto space-y-6">
+            <div className="p-6 mx-auto space-y-6">
                 {/* Summary */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {[

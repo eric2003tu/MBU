@@ -101,7 +101,7 @@ const fadeUp = {
     show: (i: number) => ({
         opacity: 1,
         y: 0,
-        transition: { duration: 0.4, delay: i * 0.06, ease: "easeOut" },
+        transition: { duration: 0.4, delay: i * 0.06, ease: "easeOut" as const },
     }),
 };
 
@@ -157,8 +157,8 @@ export default function BrowsePage() {
                             key={t}
                             onClick={() => setSelectedType(t)}
                             className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${selectedType === t
-                                    ? "bg-accent text-accent-foreground border-accent shadow-sm"
-                                    : "bg-secondary border-border/50 text-muted-foreground hover:border-accent/40 hover:text-foreground"
+                                ? "bg-accent text-accent-foreground border-accent shadow-sm"
+                                : "bg-secondary border-border/50 text-muted-foreground hover:border-accent/40 hover:text-foreground"
                                 }`}
                         >
                             {t === "All" ? "All Types" : t.charAt(0) + t.slice(1).toLowerCase()}
