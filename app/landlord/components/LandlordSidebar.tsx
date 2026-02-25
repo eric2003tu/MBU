@@ -51,19 +51,6 @@ export default function LandlordSidebar() {
             </div>
 
             {/* Role badge */}
-            <div className="px-4 py-3 border-b border-gray-100 shrink-0">
-                <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-[hsl(35,85%,55%)]/10 border-2 border-[hsl(35,85%,55%)]/30 flex items-center justify-center text-[hsl(35,85%,55%)] font-bold text-xs shrink-0">
-                        {initials}
-                    </div>
-                    <div className="min-w-0">
-                        <p className="text-gray-900 text-sm font-semibold truncate">
-                            {user?.full_name ?? "Landlord"}
-                        </p>
-                        <p className="text-xs text-[hsl(35,85%,55%)] font-medium">Landlord</p>
-                    </div>
-                </div>
-            </div>
 
             {/* Navigation */}
             <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
