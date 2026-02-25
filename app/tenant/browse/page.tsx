@@ -235,13 +235,13 @@ export default function BrowsePage() {
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <Link href={`/property/${p.id}`} className="flex-1">
+                                    <Link href={`/tenant/browse/${p.id}`} className="flex-1">
                                         <Button variant="outline" size="sm" className="w-full text-xs">
                                             View Details
                                         </Button>
                                     </Link>
                                     {p.available && (
-                                        <Link href={`/tenant/bookings?unit=${p.id}`} className="flex-1">
+                                        <Link href={`/tenant/browse/${p.id}/book`} className="flex-1">
                                             <Button size="sm" className="w-full text-xs bg-accent text-accent-foreground hover:bg-accent/90">
                                                 <Calendar className="h-3 w-3 mr-1" />
                                                 Book Now

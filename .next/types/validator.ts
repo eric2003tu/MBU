@@ -279,6 +279,24 @@ type LayoutConfig<Route extends LayoutRoutes = LayoutRoutes> = {
   type __Unused = __Check
 }
 
+// Validate ../../app/tenant/browse/[propertyId]/book/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/tenant/browse/[propertyId]/book">> = Specific
+  const handler = {} as typeof import("../../app/tenant/browse/[propertyId]/book/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/tenant/browse/[propertyId]/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/tenant/browse/[propertyId]">> = Specific
+  const handler = {} as typeof import("../../app/tenant/browse/[propertyId]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/tenant/browse/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/tenant/browse">> = Specific

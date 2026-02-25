@@ -1,8 +1,8 @@
 {
-  "/landlord/leases/page": "app/landlord/leases/page.js",
-  "/landlord/payments/page": "app/landlord/payments/page.js",
-  "/landlord/page": "app/landlord/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/tenant/page": "app/tenant/page.js",
-  "/admin/landlords/page": "app/admin/landlords/page.js"
+  "/page": "app/page.js",
+  "/verify-otp/page": "app/verify-otp/page.js",
+  "/tenant/browse/[propertyId]/book/page": "app/tenant/browse/[propertyId]/book/page.js",
+  "/tenant/bookings/page": "app/tenant/bookings/page.js",
+  "/tenant/browse/page": "app/tenant/browse/page.js",
+  "/tenant/browse/[propertyId]/page": "app/tenant/browse/[propertyId]/page.js"
 }
