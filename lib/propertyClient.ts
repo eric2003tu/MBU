@@ -86,6 +86,13 @@ export interface RentalUnit {
     [key: string]: unknown;
 }
 
+/** Shape returned by the API for all successful responses */
+interface ApiResponse<T> {
+    status: boolean;
+    data: T;
+    message?: string;
+}
+
 // ─── propertyClient ───────────────────────────────────────────────────────────
 
 export const propertyClient = {
@@ -131,7 +138,8 @@ export const propertyClient = {
             throw new ApiError(response.status, message, errData);
         }
 
-        return response.json() as Promise<Property>;
+        const json = await response.json() as ApiResponse<Property>;
+        return json.data;
     },
 
     /**
@@ -199,6 +207,7 @@ export const propertyClient = {
             throw new ApiError(response.status, message, errData);
         }
 
-        return response.json() as Promise<RentalUnit>;
+        const json = await response.json() as ApiResponse<RentalUnit>;
+        return json.data;
     },
 };
