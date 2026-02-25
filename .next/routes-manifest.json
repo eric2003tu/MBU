@@ -20,6 +20,14 @@
   },
   "dynamicRoutes": [
     {
+      "page": "/landlord/properties/[id]",
+      "regex": "^/landlord/properties/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/landlord/properties/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/property/[id]",
       "regex": "^/property/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -56,6 +64,42 @@
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/landlord",
+      "regex": "^/landlord(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/landlord(?:/)?$"
+    },
+    {
+      "page": "/landlord/bookings",
+      "regex": "^/landlord/bookings(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/landlord/bookings(?:/)?$"
+    },
+    {
+      "page": "/landlord/leases",
+      "regex": "^/landlord/leases(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/landlord/leases(?:/)?$"
+    },
+    {
+      "page": "/landlord/payments",
+      "regex": "^/landlord/payments(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/landlord/payments(?:/)?$"
+    },
+    {
+      "page": "/landlord/profile",
+      "regex": "^/landlord/profile(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/landlord/profile(?:/)?$"
+    },
+    {
+      "page": "/landlord/properties",
+      "regex": "^/landlord/properties(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/landlord/properties(?:/)?$"
     },
     {
       "page": "/login",
