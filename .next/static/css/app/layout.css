@@ -1306,6 +1306,9 @@ h1, h2, h3, h4 {
 .max-w-\[100px\]{
   max-width: 100px;
 }
+.max-w-\[140px\]{
+  max-width: 140px;
+}
 .max-w-\[200px\]{
   max-width: 200px;
 }
@@ -1333,9 +1336,6 @@ h1, h2, h3, h4 {
 }
 .max-w-xl{
   max-width: 36rem;
-}
-.max-w-\[140px\]{
-  max-width: 140px;
 }
 .flex-1{
   flex: 1 1 0%;
@@ -1648,6 +1648,9 @@ h1, h2, h3, h4 {
 .break-words{
   overflow-wrap: break-word;
 }
+.rounded{
+  border-radius: 0.25rem;
+}
 .rounded-2xl{
   border-radius: 1rem;
 }
@@ -1671,9 +1674,6 @@ h1, h2, h3, h4 {
 }
 .rounded-xl{
   border-radius: 0.75rem;
-}
-.rounded{
-  border-radius: 0.25rem;
 }
 .rounded-t-\[10px\]{
   border-top-left-radius: 10px;

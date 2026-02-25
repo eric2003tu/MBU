@@ -1,7 +1,7 @@
 {
   "/login/page": "app/login/page.js",
-  "/tenant/page": "app/tenant/page.js",
-  "/admin/page": "app/admin/page.js",
-  "/admin/landlords/page": "app/admin/landlords/page.js",
-  "/admin/properties/page": "app/admin/properties/page.js"
+  "/page": "app/page.js",
+  "/landlord/page": "app/landlord/page.js",
+  "/landlord/properties/new/page": "app/landlord/properties/new/page.js",
+  "/landlord/properties/page": "app/landlord/properties/page.js"
 }

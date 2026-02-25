@@ -3,6 +3,9 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { propertyClient } from "@/lib/propertyClient";
+
+
 import {
     Building2,
     MapPin,
@@ -107,6 +110,8 @@ export default function AddPropertyPage() {
     const [previews, setPreviews] = useState<string[]>([]);
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const [submitProgress, setSubmitProgress] = useState("");
     const fileRef = useRef<HTMLInputElement>(null);
 
     /* ── helpers ── */
@@ -176,10 +181,41 @@ export default function AddPropertyPage() {
 
     const handleSubmit = async () => {
         setSubmitting(true);
-        // TODO: POST to /api/properties
-        await new Promise((r) => setTimeout(r, 1800));
-        setSubmitting(false);
-        setSubmitted(true);
+        setSubmitError(null);
+        try {
+            // 2. Create the property — images sent directly as Files in multipart
+            setSubmitProgress("Creating property…");
+            const createdProperty = await propertyClient.createProperty({
+                title: form.title,
+                property_type: form.property_type,
+                address: form.address,
+                city: form.city,
+                description: form.description || undefined,
+                images: form.images.length > 0 ? form.images : undefined,
+            });
+
+            // 3. Create each rental unit linked to the new property
+            if (form.units.length > 0) {
+                setSubmitProgress(`Creating ${form.units.length} unit${form.units.length !== 1 ? "s" : ""}…`);
+                for (const unit of form.units) {
+                    await propertyClient.createRentalUnit({
+                        unit_name: unit.unit_name,
+                        max_guests: Number(unit.max_guests),
+                        is_active: true,
+                        property_id: createdProperty.property_id,
+                    });
+                }
+            }
+
+            setSubmitted(true);
+        } catch (err: unknown) {
+            const message =
+                err instanceof Error ? err.message : "Something went wrong. Please try again.";
+            setSubmitError(message);
+        } finally {
+            setSubmitting(false);
+            setSubmitProgress("");
+        }
     };
 
     /* ── step validation ── */
@@ -705,6 +741,12 @@ export default function AddPropertyPage() {
                             </div>
                         </div>
 
+                        {submitError && (
+                            <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-600">
+                                {submitError}
+                            </div>
+                        )}
+
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={() => setStep(2)}
@@ -719,7 +761,8 @@ export default function AddPropertyPage() {
                             >
                                 {submitting ? (
                                     <>
-                                        <Loader2 className="h-4 w-4 animate-spin" /> Creating…
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        {submitProgress || "Creating…"}
                                     </>
                                 ) : (
                                     <>

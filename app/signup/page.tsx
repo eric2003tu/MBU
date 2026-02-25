@@ -58,7 +58,8 @@ export default function SignupPage() {
                 password_hash: form.password,
             });
             // On success, navigate to OTP verification
-            router.push(`/verify-otp?email=${encodeURIComponent(form.email)}`);
+            // router.push(`/verify-otp?email=${encodeURIComponent(form.email)}`);
+            router.push("/login");
         } catch (err) {
             if (err instanceof ApiError) {
                 setError(err.message);
