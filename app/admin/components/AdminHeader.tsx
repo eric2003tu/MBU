@@ -1,8 +1,9 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { Bell, Menu } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useAdminLayout } from "../layout";
 
 interface AdminHeaderProps {
     title: string;
@@ -12,6 +13,7 @@ interface AdminHeaderProps {
 export default function AdminHeader({ title, subtitle }: AdminHeaderProps) {
     const [notifOpen, setNotifOpen] = useState(false);
     const { user } = useAuth();
+    const { openMenu } = useAdminLayout();
 
     const initials = user?.full_name
         ? user.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
@@ -20,17 +22,27 @@ export default function AdminHeader({ title, subtitle }: AdminHeaderProps) {
     const unreadCount = 5;
 
     return (
-        <header className="h-16 flex items-center justify-between px-6 bg-background/80 backdrop-blur-sm border-b border-border/50 shrink-0 sticky top-0 z-30 shadow-sm">
-            {/* Page title */}
-            <div>
-                <h1 className="text-lg font-semibold text-foreground leading-none">{title}</h1>
-                {subtitle && (
-                    <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
-                )}
+        <header className="h-16 flex items-center justify-between px-4 sm:px-6 bg-background/80 backdrop-blur-sm border-b border-border/50 shrink-0 sticky top-0 z-30 shadow-sm">
+            {/* Left: hamburger + title */}
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={openMenu}
+                    className="lg:hidden flex h-9 w-9 items-center justify-center rounded-xl border border-border hover:bg-secondary transition-colors shrink-0"
+                    aria-label="Open menu"
+                >
+                    <Menu className="h-5 w-5 text-muted-foreground" />
+                </button>
+
+                <div className="min-w-0">
+                    <h1 className="text-base sm:text-lg font-semibold text-foreground leading-none truncate">{title}</h1>
+                    {subtitle && (
+                        <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block truncate max-w-[240px] md:max-w-none">{subtitle}</p>
+                    )}
+                </div>
             </div>
 
             {/* Right side actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                 {/* Notification bell */}
                 <div className="relative">
                     <button
@@ -51,7 +63,7 @@ export default function AdminHeader({ title, subtitle }: AdminHeaderProps) {
                                 className="fixed inset-0 z-10"
                                 onClick={() => setNotifOpen(false)}
                             />
-                            <div className="absolute right-0 top-full mt-2 w-72 z-20 glass-card rounded-xl shadow-xl overflow-hidden">
+                            <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-[288px] z-20 glass-card rounded-xl shadow-xl overflow-hidden">
                                 <div className="px-4 py-3 border-b border-border/50">
                                     <p className="text-sm font-semibold text-foreground">Notifications</p>
                                 </div>
@@ -78,11 +90,11 @@ export default function AdminHeader({ title, subtitle }: AdminHeaderProps) {
 
                 {/* User avatar */}
                 <div className="flex items-center gap-2.5">
-                    <div className="h-9 w-9 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent text-xs font-bold">
+                    <div className="h-9 w-9 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent text-xs font-bold shrink-0">
                         {initials}
                     </div>
                     <div className="hidden sm:block">
-                        <p className="text-sm font-medium text-foreground leading-none truncate max-w-[120px]">
+                        <p className="text-sm font-medium text-foreground leading-none truncate max-w-[100px]">
                             {user?.full_name?.split(" ")[0] ?? "Admin"}
                         </p>
                         <p className="text-xs text-muted-foreground mt-0.5">Administrator</p>

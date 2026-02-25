@@ -1,18 +1,34 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useState, createContext, useContext } from "react";
 import TenantSidebar from "./components/TenantSidebar";
 
-export const metadata: Metadata = {
-    title: "Tenant Portal – EstateVue",
-    description: "Manage your bookings, leases, and payments all in one place.",
-};
+interface TenantLayoutContextValue {
+    openMenu: () => void;
+}
+
+export const TenantLayoutContext = createContext<TenantLayoutContextValue>({
+    openMenu: () => { },
+});
+
+export function useTenantLayout() {
+    return useContext(TenantLayoutContext);
+}
 
 export default function TenantLayout({ children }: { children: React.ReactNode }) {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
     return (
         <div className="flex h-screen overflow-hidden bg-background">
-            <TenantSidebar />
-            <div className="flex flex-col flex-1 overflow-hidden">
+            <TenantSidebar
+                mobileOpen={sidebarOpen}
+                onClose={() => setSidebarOpen(false)}
+            />
+            <div className="flex flex-col flex-1 overflow-hidden min-w-0">
                 <main className="flex-1 overflow-y-auto">
-                    {children}
+                    <TenantLayoutContext.Provider value={{ openMenu: () => setSidebarOpen(true) }}>
+                        {children}
+                    </TenantLayoutContext.Provider>
                 </main>
             </div>
         </div>

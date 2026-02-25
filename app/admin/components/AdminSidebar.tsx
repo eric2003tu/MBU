@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
     LayoutDashboard,
     UserCheck,
@@ -14,7 +14,7 @@ import {
     User,
     LogOut,
     Home,
-    Shield,
+    X,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -29,33 +29,41 @@ const navItems = [
     { href: "/admin/profile", label: "Profile", icon: User },
 ];
 
-export default function AdminSidebar() {
+interface AdminSidebarProps {
+    mobileOpen?: boolean;
+    onClose?: () => void;
+}
+
+export default function AdminSidebar({ mobileOpen = false, onClose }: AdminSidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
     const { user, logout } = useAuth();
-
-    const initials = user?.full_name
-        ? user.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
-        : "A";
 
     const handleLogout = async () => {
         await logout();
         router.push("/login");
     };
 
-    return (
-        <aside className="flex flex-col h-screen w-[260px] bg-white border-r border-gray-200 shrink-0 overflow-hidden shadow-[2px_0_8px_rgba(0,0,0,0.06)]">
+    const SidebarContent = () => (
+        <aside className="flex flex-col h-full w-[260px] bg-white border-r border-gray-200 overflow-hidden shadow-[2px_0_8px_rgba(0,0,0,0.06)]">
             {/* Logo area */}
-            <div className="flex items-center px-4 h-16 border-b border-gray-100 shrink-0">
+            <div className="flex items-center justify-between px-4 h-16 border-b border-gray-100 shrink-0">
                 <Link href="/" className="flex items-center gap-2">
                     <Home className="h-5 w-5 text-[hsl(35,85%,55%)] shrink-0" />
                     <span className="font-display text-gray-900 text-lg font-semibold truncate">
                         MBU Properties
                     </span>
                 </Link>
+                {/* Close button on mobile */}
+                {onClose && (
+                    <button
+                        onClick={onClose}
+                        className="lg:hidden flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                        <X className="h-4 w-4 text-gray-500" />
+                    </button>
+                )}
             </div>
-
-            {/* Admin badge */}
 
             {/* Navigation */}
             <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
@@ -65,7 +73,7 @@ export default function AdminSidebar() {
                             ? pathname === "/admin"
                             : pathname.startsWith(item.href);
                     return (
-                        <Link key={item.href} href={item.href}>
+                        <Link key={item.href} href={item.href} onClick={onClose}>
                             <div
                                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group cursor-pointer ${isActive
                                     ? "bg-[hsl(35,85%,55%)]/10 text-[hsl(35,85%,55%)]"
@@ -103,5 +111,41 @@ export default function AdminSidebar() {
                 </button>
             </div>
         </aside>
+    );
+
+    return (
+        <>
+            {/* Desktop sidebar */}
+            <div className="hidden lg:flex h-screen shrink-0">
+                <SidebarContent />
+            </div>
+
+            {/* Mobile overlay */}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <>
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="lg:hidden fixed inset-0 bg-black/40 z-40"
+                            onClick={onClose}
+                        />
+                        {/* Drawer */}
+                        <motion.div
+                            initial={{ x: -260 }}
+                            animate={{ x: 0 }}
+                            exit={{ x: -260 }}
+                            transition={{ type: "spring", damping: 26, stiffness: 300 }}
+                            className="lg:hidden fixed top-0 left-0 h-full z-50"
+                        >
+                            <SidebarContent />
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+        </>
     );
 }

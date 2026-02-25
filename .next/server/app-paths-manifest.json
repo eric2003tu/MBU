@@ -1,8 +1,6 @@
 {
   "/page": "app/page.js",
-  "/verify-otp/page": "app/verify-otp/page.js",
-  "/tenant/browse/[propertyId]/book/page": "app/tenant/browse/[propertyId]/book/page.js",
+  "/tenant/page": "app/tenant/page.js",
   "/tenant/bookings/page": "app/tenant/bookings/page.js",
-  "/tenant/browse/page": "app/tenant/browse/page.js",
-  "/tenant/browse/[propertyId]/page": "app/tenant/browse/[propertyId]/page.js"
+  "/tenant/bookings/[id]/page": "app/tenant/bookings/[id]/page.js"
 }
