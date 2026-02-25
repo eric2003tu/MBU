@@ -9,10 +9,10 @@ const Footer = () => {
                     <div>
                         <div className="flex items-center gap-2 mb-4">
                             <Home className="h-5 w-5 text-accent" />
-                            <span className="font-display text-xl font-semibold">EstateVue</span>
+                            <span className="font-display text-xl font-semibold">MBU Properties</span>
                         </div>
                         <p className="text-sm text-primary-foreground/70 leading-relaxed">
-                            Premium real estate platform connecting buyers, renters, and agents with exceptional properties worldwide.
+                            Professional property management, sales brokerage, valuation, and compliance services in Rwanda.
                         </p>
                     </div>
 
@@ -51,22 +51,22 @@ const Footer = () => {
                         <div className="space-y-3 text-sm text-primary-foreground/70">
                             <div className="flex items-center gap-2">
                                 <MapPin className="h-4 w-4 text-accent shrink-0" />
-                                <span>123 Estate Avenue, NY 10001</span>
+                                <span>Kigali, Rwanda</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Phone className="h-4 w-4 text-accent shrink-0" />
-                                <span>+1 (555) 123-4567</span>
+                                <span>+250 788 000 000</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Mail className="h-4 w-4 text-accent shrink-0" />
-                                <span>hello@estatevue.com</span>
+                                <span>info@mbuproperties.rw</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div className="border-t border-primary-foreground/10 mt-12 pt-8 text-center text-sm text-primary-foreground/50">
-                    © 2026 EstateVue. All rights reserved.
+                    © 2026 MB&U Company Ltd. All rights reserved.
                 </div>
             </div>
         </footer>

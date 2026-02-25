@@ -8,15 +8,20 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import SearchBar from "@/components/SearchBar";
+import AboutSection from "@/components/landing/AboutSection";
+import ServicesSection from "@/components/landing/ServicesSection";
+import WhyChooseUsSection from "@/components/landing/WhyChooseUsSection";
+import GrowthRoadmapSection from "@/components/landing/GrowthRoadmapSection";
+import ValuesSection from "@/components/landing/ValuesSection";
 import { properties } from "@/lib/data/properties";
 
 const featuredProperties = properties.filter((p) => p.featured);
 
 const stats = [
-    { icon: Building2, label: "Properties", value: "2,500+" },
+    { icon: Building2, label: "Properties Managed", value: "500+" },
     { icon: Key, label: "Happy Clients", value: "1,200+" },
-    { icon: TrendingUp, label: "Cities", value: "45+" },
-    { icon: Shield, label: "Years of Trust", value: "15+" },
+    { icon: TrendingUp, label: "Cities", value: "5" },
+    { icon: Shield, label: "Years of Trust", value: "3+" },
 ];
 
 export default function HomePage() {
@@ -37,8 +42,8 @@ export default function HomePage() {
                         transition={{ duration: 0.7 }}
                         className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight"
                     >
-                        Find Your Dream
-                        <span className="text-gradient block">Property</span>
+                        Your Trusted
+                        <span className="text-gradient block">Property Partner</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -46,7 +51,7 @@ export default function HomePage() {
                         transition={{ duration: 0.7, delay: 0.2 }}
                         className="text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto mb-10"
                     >
-                        Discover exceptional homes and commercial spaces. Whether you&apos;re buying, renting, or investing — we make it effortless.
+                        Professional property management, sales brokerage, valuation, and compliance services in Rwanda — powered by technology.
                     </motion.p>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -90,7 +95,7 @@ export default function HomePage() {
                 </div>
             </section>
 
-                        {/* Stats */}
+            {/* Stats */}
             <section className="py-16 bg-secondary">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -112,18 +117,35 @@ export default function HomePage() {
                 </div>
             </section>
 
+            {/* About */}
+            <AboutSection />
+
+            {/* Services */}
+            <ServicesSection />
+
+            {/* Why Choose Us */}
+            <WhyChooseUsSection />
+
+            {/* Growth Roadmap */}
+            <GrowthRoadmapSection />
+
+            {/* Values */}
+            <ValuesSection />
+
             {/* CTA */}
-            <section className="py-20 bg-primary">
+            <section className="py-20 bg-accent">
                 <div className="container mx-auto px-4 text-center">
-                    <h2 className="font-display text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-                        Ready to List Your Property?
+                    <h2 className="font-display text-3xl md:text-4xl font-bold text-accent-foreground mb-4">
+                        Ready to Partner with MBU Properties?
                     </h2>
-                    <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">
-                        Join thousands of property owners who trust EstateVue to connect them with the perfect buyers and renters.
+                    <p className="text-accent-foreground/70 max-w-xl mx-auto mb-8">
+                        Whether you&apos;re a landlord, investor, or tenant — let us help you navigate Rwanda&apos;s real estate market with confidence.
                     </p>
-                    <Button className="bg-accent text-accent-foreground hover:bg-accent/90 px-8 py-3 text-base">
-                        Get Started Today
-                    </Button>
+                    <Link href="/signup">
+                        <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3 text-base">
+                            Get Started Today
+                        </Button>
+                    </Link>
                 </div>
             </section>
 

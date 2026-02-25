@@ -38,7 +38,7 @@ const Navbar = () => {
             <nav className="container mx-auto flex items-center justify-between h-16 px-4">
                 <Link href="/" className="flex items-center gap-2">
                     <Home className="h-5 w-5 text-accent" />
-                    <span className="font-display text-xl font-semibold text-foreground">EstateVue</span>
+                    <span className="font-display text-xl font-semibold text-foreground">MBU Properties</span>
                 </Link>
 
                 {/* Desktop nav links */}
