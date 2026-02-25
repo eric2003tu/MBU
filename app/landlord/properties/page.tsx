@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation"
 import { Building2, MapPin, Home, Plus, ArrowRight, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LandlordHeader from "../components/LandlordHeader";
@@ -76,6 +77,7 @@ const fadeUp = {
 };
 
 export default function PropertiesPage() {
+    const router = useRouter()
     return (
         <div>
             <LandlordHeader title="My Properties" subtitle="Manage your property portfolio" />
@@ -91,9 +93,13 @@ export default function PropertiesPage() {
                             </span>
                         </div>
                     </div>
-                    <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5">
-                        <Plus className="h-3.5 w-3.5" />
-                        Add Property
+                    <Button
+                      size="sm"
+                      className="bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5"
+                      onClick={() => router.push("/landlord/properties/new")}
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      Add Property
                     </Button>
                 </div>
 

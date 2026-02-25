@@ -45,7 +45,7 @@ export default function TenantSidebar() {
                 <div className="flex items-center gap-2">
                     <Home className="h-5 w-5 text-[hsl(35,85%,55%)] shrink-0" />
                     <span className="font-display text-gray-900 text-lg font-semibold truncate">
-                        EstateVue
+                        MBU Properties
                     </span>
                 </div>
             </div>
