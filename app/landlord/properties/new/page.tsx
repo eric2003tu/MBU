@@ -194,16 +194,31 @@ export default function AddPropertyPage() {
                 images: form.images.length > 0 ? form.images : undefined,
             });
 
-            // 3. Create each rental unit linked to the new property
+            // 3. Create each rental unit + its pricing plans
             if (form.units.length > 0) {
-                setSubmitProgress(`Creating ${form.units.length} unit${form.units.length !== 1 ? "s" : ""}…`);
-                for (const unit of form.units) {
-                    await propertyClient.createRentalUnit({
+                const totalUnits = form.units.length;
+                for (let i = 0; i < totalUnits; i++) {
+                    const unit = form.units[i];
+                    setSubmitProgress(`Creating unit ${i + 1} of ${totalUnits}…`);
+
+                    const createdUnit = await propertyClient.createRentalUnit({
                         unit_name: unit.unit_name,
                         max_guests: Number(unit.max_guests),
                         is_active: true,
                         property_id: createdProperty.property_id,
                     });
+
+                    // Create each pricing plan linked to the new unit
+                    for (const plan of unit.pricingPlans) {
+                        if (Number(plan.price) > 0) {
+                            await propertyClient.createPricingPlan({
+                                rental_type: plan.rental_type,
+                                price: Number(plan.price),
+                                minimum_stay: Number(plan.minimum_stay) || 1,
+                                unit_id: createdUnit.unit_id,
+                            });
+                        }
+                    }
                 }
             }
 

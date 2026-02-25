@@ -125,6 +125,13 @@ export interface CreateRentalUnitPayload {
     property_id: string;
 }
 
+export interface CreatePricingPlanPayload {
+    rental_type: RentalType;
+    price: number;
+    minimum_stay: number;
+    unit_id: string;
+}
+
 export interface RentalUnit {
     unit_id: string;
     unit_name: string;
@@ -292,6 +299,40 @@ export const propertyClient = {
         }
 
         const json = await response.json() as ApiResponse<RentalUnit>;
+        return json.data;
+    },
+
+    /**
+     * POST /pricingplan
+     *
+     * Creates a pricing plan linked to a rental unit.
+     * Must be called after `createRentalUnit` using the returned `unit_id`.
+     */
+    createPricingPlan: async (payload: CreatePricingPlanPayload): Promise<PricingPlan> => {
+        const response = await fetch(`${BASE_URL}/pricingplan`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                ...authHeaders(),
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            let errData: unknown;
+            try {
+                errData = await response.json();
+            } catch {
+                errData = await response.text();
+            }
+            const message =
+                (errData as { detail?: string; message?: string })?.detail ??
+                (errData as { message?: string })?.message ??
+                `Pricing plan creation failed with status ${response.status}`;
+            throw new ApiError(response.status, message, errData);
+        }
+
+        const json = await response.json() as ApiResponse<PricingPlan>;
         return json.data;
     },
 };
