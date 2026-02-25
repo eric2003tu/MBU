@@ -93,10 +93,19 @@ export default function LandlordHeader({ title, subtitle }: LandlordHeaderProps)
                         {initials}
                     </div>
                     <div className="hidden sm:block">
-                        <p className="text-sm font-medium text-foreground leading-none truncate max-w-[100px]">
-                            {user?.full_name?.split(" ")[0] ?? "Landlord"}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Landlord</p>
+                        {user?.full_name ? (
+                            <>
+                                <p className="text-sm font-semibold text-foreground leading-none truncate max-w-[140px]">
+                                    {user.full_name}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-0.5">Landlord</p>
+                            </>
+                        ) : (
+                            <div className="space-y-1">
+                                <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+                                <div className="h-2.5 w-16 rounded bg-muted animate-pulse" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

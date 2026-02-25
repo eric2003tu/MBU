@@ -92,10 +92,19 @@ export default function TenantHeader({ title, subtitle }: TenantHeaderProps) {
                         {initials}
                     </div>
                     <div className="hidden sm:block">
-                        <p className="text-sm font-medium text-foreground leading-none truncate max-w-[100px]">
-                            {user?.full_name?.split(" ")[0] ?? "Tenant"}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Tenant</p>
+                        {user?.full_name ? (
+                            <>
+                                <p className="text-sm font-semibold text-foreground leading-none truncate max-w-[140px]">
+                                    {user.full_name}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-0.5">Tenant</p>
+                            </>
+                        ) : (
+                            <div className="space-y-1">
+                                <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+                                <div className="h-2.5 w-16 rounded bg-muted animate-pulse" />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
