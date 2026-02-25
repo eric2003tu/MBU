@@ -68,6 +68,56 @@ export interface Property {
     updated_at?: string;
 }
 
+export interface PricingPlan {
+    pricing_id: string;
+    rental_type: RentalType;
+    price: string;
+    minimum_stay: number;
+    created_at?: string;
+    unit_id: string;
+}
+
+export interface UnitWithDetails {
+    unit_id: string;
+    unit_name: string;
+    max_guests: number;
+    is_active: boolean;
+    property_id: string;
+    pricingPlans: PricingPlan[];
+    availability: unknown[];
+    bookings: unknown[];
+    leases: unknown[];
+}
+
+export interface PropertyFull extends Property {
+    units: UnitWithDetails[];
+    landlord?: {
+        landlord_id: string;
+        status: string;
+        profile_photo_url?: string;
+        physical_address?: string;
+        user_id: string;
+        [key: string]: unknown;
+    };
+}
+
+export interface PropertyListParams {
+    page?: number;
+    limit?: number;
+    search?: string;
+    title?: string;
+    city?: string;
+    property_type?: string;
+    landlord_id?: string;
+}
+
+export interface PropertyListResponse {
+    items: PropertyFull[];
+    total: number;
+    page: number;
+    limit: number;
+}
+
 export interface CreateRentalUnitPayload {
     unit_name: string;
     max_guests: number;
@@ -97,6 +147,40 @@ interface ApiResponse<T> {
 
 export const propertyClient = {
     /**
+     * GET /property/all
+     *
+     * Fetches all properties with images, landlord info, and units.
+     * Supports optional filtering and pagination query params.
+     */
+    getAll: async (params?: PropertyListParams): Promise<PropertyListResponse> => {
+        const query = new URLSearchParams();
+        if (params?.page) query.set("page", String(params.page));
+        if (params?.limit) query.set("limit", String(params.limit));
+        if (params?.search) query.set("search", params.search);
+        if (params?.title) query.set("title", params.title);
+        if (params?.city) query.set("city", params.city);
+        if (params?.property_type) query.set("property_type", params.property_type);
+        if (params?.landlord_id) query.set("landlord_id", params.landlord_id);
+
+        const url = `${BASE_URL}/property/all${query.toString() ? `?${query}` : ""}`;
+        const response = await fetch(url, { headers: authHeaders() });
+
+        if (!response.ok) {
+            let errData: unknown;
+            try { errData = await response.json(); } catch { errData = await response.text(); }
+            const message =
+                (errData as { detail?: string; message?: string })?.detail ??
+                (errData as { message?: string })?.message ??
+                `Failed to fetch properties (${response.status})`;
+            throw new ApiError(response.status, message, errData);
+        }
+
+        const json = await response.json() as ApiResponse<PropertyListResponse>;
+        return json.data;
+    },
+
+    /**
+
      * POST /property
      *
      * Creates a new property listing.
