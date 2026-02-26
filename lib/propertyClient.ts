@@ -187,6 +187,29 @@ export const propertyClient = {
     },
 
     /**
+     * GET /property/{id}
+     *
+     * Fetches a single property by ID with images, landlord info, and units.
+     */
+    getById: async (id: string): Promise<PropertyFull> => {
+        const url = `${BASE_URL}/property/${id}`;
+        const response = await fetch(url, { headers: authHeaders() });
+
+        if (!response.ok) {
+            let errData: unknown;
+            try { errData = await response.json(); } catch { errData = await response.text(); }
+            const message =
+                (errData as { detail?: string; message?: string })?.detail ??
+                (errData as { message?: string })?.message ??
+                `Failed to fetch property (${response.status})`;
+            throw new ApiError(response.status, message, errData);
+        }
+
+        const json = await response.json() as ApiResponse<PropertyFull>;
+        return json.data;
+    },
+
+    /**
 
      * POST /property
      *
