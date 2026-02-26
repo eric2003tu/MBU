@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Building2, Key, TrendingUp, Shield } from "lucide-react";
@@ -13,9 +14,7 @@ import ServicesSection from "@/components/landing/ServicesSection";
 import WhyChooseUsSection from "@/components/landing/WhyChooseUsSection";
 import GrowthRoadmapSection from "@/components/landing/GrowthRoadmapSection";
 import ValuesSection from "@/components/landing/ValuesSection";
-import { properties } from "@/lib/data/properties";
-
-const featuredProperties = properties.filter((p) => p.featured);
+import { propertyClient, type PropertyFull } from "@/lib/propertyClient";
 
 const stats = [
     { icon: Building2, label: "Properties Managed", value: "500+" },
@@ -25,6 +24,16 @@ const stats = [
 ];
 
 export default function HomePage() {
+    const [featuredProperties, setFeaturedProperties] = useState<PropertyFull[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        propertyClient
+            .getAll({ limit: 4 })
+            .then((res) => setFeaturedProperties(res.items.slice(0, 4)))
+            .catch(() => setFeaturedProperties([]))
+            .finally(() => setLoading(false));
+    }, []);
     return (
         <div className="min-h-screen bg-background">
             <Navbar />
@@ -81,9 +90,25 @@ export default function HomePage() {
                         </Link>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {featuredProperties.map((property, i) => (
-                            <PropertyCard key={property.id} property={property} index={i} />
-                        ))}
+                        {loading
+                            ? Array.from({ length: 4 }).map((_, i) => (
+                                <div key={i} className="glass-card rounded-lg overflow-hidden animate-pulse">
+                                    <div className="aspect-[4/3] bg-muted" />
+                                    <div className="p-5 space-y-3">
+                                        <div className="h-3 bg-muted rounded w-2/3" />
+                                        <div className="h-5 bg-muted rounded w-full" />
+                                        <div className="h-3 bg-muted rounded w-1/2" />
+                                        <div className="border-t border-border pt-3 flex justify-between">
+                                            <div className="h-5 bg-muted rounded w-1/3" />
+                                            <div className="h-6 bg-muted rounded-full w-24" />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                            : featuredProperties.map((property, i) => (
+                                <PropertyCard key={property.property_id} property={property} index={i} />
+                            ))
+                        }
                     </div>
                     <div className="mt-8 text-center md:hidden">
                         <Link href="/properties">

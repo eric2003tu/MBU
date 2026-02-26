@@ -45,10 +45,12 @@ export default function TenantSidebar({ mobileOpen = false, onClose }: TenantSid
             {/* Logo area */}
             <div className="flex items-center justify-between px-4 h-16 border-b border-gray-100 shrink-0">
                 <div className="flex items-center gap-2">
+                    <Link href="/" className="flex flex-row gap-3">
                     <Home className="h-5 w-5 text-[hsl(35,85%,55%)] shrink-0" />
                     <span className="font-display text-gray-900 text-lg font-semibold truncate">
                         MBU Properties
                     </span>
+                    </Link>
                 </div>
                 {onClose && (
                     <button
