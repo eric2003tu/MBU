@@ -1,4 +1,4 @@
-// File: C:\Users\mukar\Desktop\Other\property-hub\app\page.tsx
+// File: /home/merci-ruyanga/Desktop/RUYANGA/Real Estate/MBU/app/page.tsx
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
