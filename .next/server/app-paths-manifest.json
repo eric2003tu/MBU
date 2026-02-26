@@ -1,3 +1,8 @@
 {
-  "/page": "app/page.js"
+  "/property/[id]/page": "app/property/[id]/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/landlord/properties/page": "app/landlord/properties/page.js",
+  "/landlord/properties/[id]/page": "app/landlord/properties/[id]/page.js",
+  "/landlord/properties/new/page": "app/landlord/properties/new/page.js"
 }

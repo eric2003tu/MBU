@@ -1,29 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Layers, Home, Users, Calendar, DollarSign, Settings } from "lucide-react";
+import { ArrowLeft, MapPin, Layers, Home, Users, DollarSign, Settings, Loader2, AlertCircle, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import LandlordHeader from "../../components/LandlordHeader";
-
-const property = {
-    id: "prop-001",
-    title: "Sunset Apartments",
-    property_type: "APARTMENT",
-    address: "KG 123 St, Kigali",
-    city: "Kigali",
-    description: "A modern apartment building located in the heart of Kigali, offering comfortable living spaces with excellent amenities and nearby services.",
-    image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
-};
-
-const units = [
-    { id: "u-001", name: "Unit 1A – Ground Floor", max_guests: 2, is_active: true, pricing: [{ type: "DAILY", price: 80, min_stay: 1 }, { type: "MONTHLY", price: 1200, min_stay: 1 }], occupancy: "Occupied" },
-    { id: "u-002", name: "Unit 1B – Ground Floor", max_guests: 3, is_active: true, pricing: [{ type: "DAILY", price: 100, min_stay: 1 }, { type: "MONTHLY", price: 1500, min_stay: 1 }], occupancy: "Vacant" },
-    { id: "u-003", name: "Unit 2A – First Floor", max_guests: 4, is_active: true, pricing: [{ type: "DAILY", price: 120, min_stay: 2 }, { type: "MONTHLY", price: 1800, min_stay: 3 }], occupancy: "Occupied" },
-    { id: "u-004", name: "Unit 2B – First Floor", max_guests: 2, is_active: true, pricing: [{ type: "DAILY", price: 80, min_stay: 1 }, { type: "MONTHLY", price: 1200, min_stay: 1 }], occupancy: "Occupied" },
-    { id: "u-005", name: "Unit 3A – Second Floor", max_guests: 4, is_active: true, pricing: [{ type: "MONTHLY", price: 2000, min_stay: 6 }], occupancy: "Occupied" },
-    { id: "u-006", name: "Unit 3B – Second Floor", max_guests: 2, is_active: false, pricing: [{ type: "MONTHLY", price: 1200, min_stay: 1 }], occupancy: "Inactive" },
-];
+import { propertyClient, PropertyFull, UnitWithDetails } from "@/lib/propertyClient";
 
 const rentalTypeColors: Record<string, string> = {
     DAILY: "text-blue-600 bg-blue-50",
@@ -37,9 +21,80 @@ const occupancyColors: Record<string, string> = {
     Inactive: "text-gray-500 bg-gray-50 border-gray-200",
 };
 
+function getUnitOccupancy(unit: UnitWithDetails): string {
+    if (!unit.is_active) return "Inactive";
+    if (unit.bookings && unit.bookings.length > 0) return "Occupied";
+    return "Vacant";
+}
+
 export default function PropertyDetailPage() {
+    const params = useParams();
+    const id = params.id as string;
+
+    const [property, setProperty] = useState<PropertyFull | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!id) return;
+        async function fetchProperty() {
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await propertyClient.getById(id);
+                setProperty(data);
+            } catch (err) {
+                const message = err instanceof Error ? err.message : "Failed to load property";
+                setError(message);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchProperty();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div>
+                <LandlordHeader title="Property Details" />
+                <div className="flex flex-col items-center justify-center py-32 gap-3">
+                    <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                    <p className="text-sm text-muted-foreground">Loading property…</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error || !property) {
+        return (
+            <div>
+                <LandlordHeader title="Property Details" />
+                <div className="p-6">
+                    <Link href="/landlord/properties" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors mb-8">
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to Properties
+                    </Link>
+                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                        <div className="h-14 w-14 rounded-full bg-red-50 flex items-center justify-center">
+                            <AlertCircle className="h-7 w-7 text-red-500" />
+                        </div>
+                        <div className="text-center">
+                            <p className="text-sm font-medium text-foreground">Failed to load property</p>
+                            <p className="text-xs text-muted-foreground mt-1">{error ?? "Property not found"}</p>
+                        </div>
+                        <Button size="sm" variant="outline" onClick={() => window.location.reload()}>
+                            Try Again
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    const units = property.units ?? [];
     const activeCount = units.filter((u) => u.is_active).length;
-    const occupiedCount = units.filter((u) => u.occupancy === "Occupied").length;
+    const occupiedCount = units.filter((u) => u.bookings && u.bookings.length > 0).length;
+    const heroImage = property.images && property.images.length > 0 ? property.images[0].url : null;
 
     return (
         <div>
@@ -59,8 +114,15 @@ export default function PropertyDetailPage() {
                     transition={{ duration: 0.5 }}
                     className="glass-card rounded-2xl overflow-hidden"
                 >
-                    <div className="relative h-56 overflow-hidden">
-                        <img src={property.image} alt={property.title} className="w-full h-full object-cover" />
+                    <div className="relative h-56 overflow-hidden bg-muted">
+                        {heroImage ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={heroImage} alt={property.title} className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                                <Building2 className="h-16 w-16 text-muted-foreground/30" />
+                            </div>
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                         <div className="absolute bottom-4 left-5">
                             <h2 className="font-display text-2xl font-bold text-white">{property.title}</h2>
@@ -72,7 +134,9 @@ export default function PropertyDetailPage() {
                     </div>
 
                     <div className="p-5">
-                        <p className="text-sm text-muted-foreground leading-relaxed">{property.description}</p>
+                        {property.description && (
+                            <p className="text-sm text-muted-foreground leading-relaxed">{property.description}</p>
+                        )}
                         <div className="flex flex-wrap gap-6 mt-4">
                             <div className="flex items-center gap-2 text-sm">
                                 <Layers className="h-4 w-4 text-accent" />
@@ -103,45 +167,58 @@ export default function PropertyDetailPage() {
                         </Button>
                     </div>
 
-                    <div className="space-y-4">
-                        {units.map((unit, i) => (
-                            <motion.div
-                                key={unit.id}
-                                initial={{ opacity: 0, y: 12 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: i * 0.06, ease: "easeOut" as const }}
-                                className={`glass-card rounded-2xl p-5 ${!unit.is_active ? "opacity-60" : ""}`}
-                            >
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <div>
-                                        <div className="flex items-center gap-3">
-                                            <h4 className="text-sm font-semibold text-foreground">{unit.name}</h4>
-                                            <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${occupancyColors[unit.occupancy]}`}>
-                                                {unit.occupancy}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                                            <span className="flex items-center gap-1">
-                                                <Users className="h-3 w-3" /> Max {unit.max_guests} guests
-                                            </span>
-                                        </div>
-                                    </div>
+                    {units.length === 0 && (
+                        <div className="glass-card rounded-2xl p-8 text-center">
+                            <p className="text-sm text-muted-foreground">No rental units have been added yet.</p>
+                        </div>
+                    )}
 
-                                    {/* Pricing plans */}
-                                    <div className="flex flex-wrap gap-2">
-                                        {unit.pricing.map((p) => (
-                                            <div key={p.type} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium ${rentalTypeColors[p.type]}`}>
-                                                <DollarSign className="h-3 w-3" />
-                                                <span>${p.price}/{p.type === "DAILY" ? "night" : p.type === "MONTHLY" ? "mo" : "yr"}</span>
-                                                {p.min_stay > 1 && (
-                                                    <span className="text-[10px] opacity-70">min {p.min_stay}</span>
-                                                )}
+                    <div className="space-y-4">
+                        {units.map((unit, i) => {
+                            const occupancy = getUnitOccupancy(unit);
+                            return (
+                                <motion.div
+                                    key={unit.unit_id}
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.4, delay: i * 0.06, ease: "easeOut" as const }}
+                                    className={`glass-card rounded-2xl p-5 ${!unit.is_active ? "opacity-60" : ""}`}
+                                >
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <div>
+                                            <div className="flex items-center gap-3">
+                                                <h4 className="text-sm font-semibold text-foreground">{unit.unit_name}</h4>
+                                                <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${occupancyColors[occupancy]}`}>
+                                                    {occupancy}
+                                                </span>
                                             </div>
-                                        ))}
+                                            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                                                <span className="flex items-center gap-1">
+                                                    <Users className="h-3 w-3" /> Max {unit.max_guests} guests
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Pricing plans */}
+                                        <div className="flex flex-wrap gap-2">
+                                            {unit.pricingPlans.length > 0 ? (
+                                                unit.pricingPlans.map((p) => (
+                                                    <div key={p.pricing_id} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium ${rentalTypeColors[p.rental_type] ?? "text-gray-600 bg-gray-50"}`}>
+                                                        <DollarSign className="h-3 w-3" />
+                                                        <span>${p.price}/{p.rental_type === "DAILY" ? "night" : p.rental_type === "MONTHLY" ? "mo" : "yr"}</span>
+                                                        {p.minimum_stay > 1 && (
+                                                            <span className="text-[10px] opacity-70">min {p.minimum_stay}</span>
+                                                        )}
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <span className="text-xs text-muted-foreground italic">No pricing set</span>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.div>
-                        ))}
+                                </motion.div>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
