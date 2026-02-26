@@ -66,7 +66,8 @@ const Footer = () => {
                 </div>
 
                 <div className="border-t border-primary-foreground/10 mt-12 pt-8 text-center text-sm text-primary-foreground/50">
-                    © 2026 MB&U Company Ltd. All rights reserved.
+                    <p>© 2026 MB&U Company Ltd. All rights reserved.</p>
+                    <p className="mt-2">Developed by <Link href="https://github.com/RUYANGA" className="hover:text-accent transition-colors">Merci RUYANGA</Link></p>
                 </div>
             </div>
         </footer>

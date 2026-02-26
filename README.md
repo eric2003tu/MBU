@@ -1,73 +1,57 @@
-# Welcome to your Lovable project
+# MBU Properties
 
-## Project info
+A professional property management, sales brokerage, valuation, and compliance platform in Rwanda — powered by technology.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+MBU Properties simplifies the real estate experience for landlords, investors, and tenants by providing a seamless, integrated platform for managing properties, discovering listings, and ensuring regulatory compliance.
 
-## How can I edit this code?
+## Key Features
 
-There are several ways of editing your application.
+- **Multi-Role Dashboards**: Tailored experiences for Admins, Landlords, Tenants, and Agents.
+- **Property Management**: Comprehensive tools for listing and managing diverse property types including houses, apartments, villas, and commercial spaces.
+- **Rental Units & Pricing**: Flexible rental options (Daily, Monthly, Yearly) with automated pricing plan management.
+- **Smart Discovery**: Advanced search and filtering to find the perfect property in Rwanda's top cities.
+- **Secure Access**: Robust authentication system with OTP verification.
+- **Responsive Design**: Modern, glassmorphic UI built for both desktop and mobile transparency.
 
-**Use Lovable**
+## Technologies Used
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Framework**: Next.js 15+
+- **Language**: TypeScript
+- **UI/UX**: React, Tailwind CSS, shadcn-ui, Framer Motion
+- **Data Fetching**: TanStack Query (React Query)
+- **API Communication**: Axios & Typed Fetch Wrappers
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js & npm installed
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Local Development
 
-Follow these steps:
+Follow these steps to set up the project locally:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Step 1: Clone the repository
+git clone git@github.com:eric2003tu/MBU.git
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Step 2: Navigate to the project directory
+cd MBU
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Step 3: Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:3000`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## API Integration
 
-**Use GitHub Codespaces**
+The frontend communicates with the MBU Properties Backend API.
+- **Production API URL**: `https://real-est-beate-latest.onrender.com`
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
+© 2026 MB&U Company Ltd. All rights reserved. Developed by [Merci RUYANGA](https://github.com/RUYANGA)
 
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
