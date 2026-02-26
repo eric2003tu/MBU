@@ -16,10 +16,40 @@
       "static/chunks/main-app.js",
       "static/chunks/app/property/[id]/page.js"
     ],
-    "/page": [
+    "/tenant/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/tenant/layout.js"
+    ],
+    "/tenant/browse/[propertyId]/book/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tenant/browse/[propertyId]/book/page.js"
+    ],
+    "/login/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/login/page.js"
+    ],
+    "/tenant/browse/[propertyId]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tenant/browse/[propertyId]/page.js"
+    ],
+    "/tenant/browse/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tenant/browse/page.js"
+    ],
+    "/tenant/bookings/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tenant/bookings/page.js"
+    ],
+    "/tenant/bookings/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/tenant/bookings/[id]/page.js"
     ]
   }
 }

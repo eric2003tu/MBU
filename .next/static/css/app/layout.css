@@ -1135,6 +1135,9 @@ h1, h2, h3, h4 {
 .min-h-svh{
   min-height: 100svh;
 }
+.min-h-\[40vh\]{
+  min-height: 40vh;
+}
 .w-0{
   width: 0px;
 }
@@ -1620,6 +1623,9 @@ h1, h2, h3, h4 {
 }
 .break-words{
   overflow-wrap: break-word;
+}
+.break-all{
+  word-break: break-all;
 }
 .rounded{
   border-radius: 0.25rem;
@@ -3227,6 +3233,11 @@ h1, h2, h3, h4 {
 
 .hover\:bg-white\/20:hover{
   background-color: rgb(255 255 255 / 0.2);
+}
+
+.hover\:bg-amber-100:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 243 199 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:text-accent:hover{

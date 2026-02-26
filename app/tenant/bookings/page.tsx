@@ -1,48 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Calendar, CheckCircle2, Clock, XCircle, ArrowRight, Plus } from "lucide-react";
+import {
+    Calendar, CheckCircle2, Clock, XCircle, ArrowRight, Plus,
+    Loader2, AlertCircle, CalendarX2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TenantHeader from "../components/TenantHeader";
+import { bookingClient, type Booking } from "@/lib/bookingClient";
+import { getAuthToken } from "@/lib/auth";
 
 type BookingStatus = "CONFIRMED" | "PENDING" | "CANCELLED";
-
-const mockBookings = [
-    {
-        id: "bk-001",
-        unit: "Unit 3A – Green Apartments",
-        property: "Green Apartments",
-        city: "New York",
-        checkIn: "2026-03-05",
-        checkOut: "2026-03-12",
-        totalPrice: 840,
-        status: "CONFIRMED" as BookingStatus,
-        image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&q=80",
-    },
-    {
-        id: "bk-002",
-        unit: "Studio Loft – Heights Tower",
-        property: "Heights Tower",
-        city: "Chicago",
-        checkIn: "2026-04-01",
-        checkOut: "2026-04-03",
-        totalPrice: 320,
-        status: "PENDING" as BookingStatus,
-        image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&q=80",
-    },
-    {
-        id: "bk-003",
-        unit: "Room 12 – Garden View",
-        property: "Garden View Residences",
-        city: "Austin",
-        checkIn: "2026-01-10",
-        checkOut: "2026-01-15",
-        totalPrice: 500,
-        status: "CANCELLED" as BookingStatus,
-        image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=400&q=80",
-    },
-];
 
 const statusConfig: Record<BookingStatus, { label: string; className: string; icon: typeof CheckCircle2 }> = {
     CONFIRMED: { label: "Confirmed", className: "text-green-700 bg-green-50 border-green-200", icon: CheckCircle2 },
@@ -63,33 +33,70 @@ function formatDate(dateStr: string) {
     return new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+/** Decode user_id from JWT */
+function getUserIdFromToken(): string | null {
+    const token = getAuthToken();
+    if (!token) return null;
+    try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.sub ?? payload.user_id ?? null;
+    } catch {
+        return null;
+    }
+}
+
 export default function BookingsPage() {
+    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [filter, setFilter] = useState<"All" | BookingStatus>("All");
+
+    useEffect(() => {
+        setLoading(true);
+        setError(null);
+
+        const userId = getUserIdFromToken();
+        bookingClient
+            .getAll(userId ? { user_id: userId } : undefined)
+            .then((data) => setBookings(data))
+            .catch((err: Error) => setError(err.message ?? "Failed to load bookings"))
+            .finally(() => setLoading(false));
+    }, []);
+
+    const filtered = filter === "All" ? bookings : bookings.filter((b) => b.status === filter);
+
+    const countByStatus = (s: BookingStatus) => bookings.filter((b) => b.status === s).length;
+
     return (
         <div>
             <TenantHeader title="My Bookings" subtitle="Manage your short-term rental bookings" />
 
-            <div className="p-6  mx-auto space-y-6">
+            <div className="p-6 mx-auto space-y-6">
                 {/* Summary pills */}
                 <div className="flex flex-wrap gap-3">
                     {(["All", "CONFIRMED", "PENDING", "CANCELLED"] as const).map((s) => {
-                        const count = s === "All" ? mockBookings.length : mockBookings.filter((b) => b.status === s).length;
+                        const count = s === "All" ? bookings.length : countByStatus(s);
+                        const isActive = filter === s;
                         return (
-                            <div
+                            <button
                                 key={s}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium ${s === "All"
-                                    ? "bg-primary text-primary-foreground border-primary"
+                                onClick={() => setFilter(s)}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all ${isActive
+                                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
                                     : s === "CONFIRMED"
-                                        ? "border-green-200 text-green-700 bg-green-50"
+                                        ? "border-green-200 text-green-700 bg-green-50 hover:bg-green-100"
                                         : s === "PENDING"
-                                            ? "border-amber-200 text-amber-700 bg-amber-50"
-                                            : "border-red-200 text-red-700 bg-red-50"
+                                            ? "border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100"
+                                            : s === "CANCELLED"
+                                                ? "border-red-200 text-red-700 bg-red-50 hover:bg-red-100"
+                                                : "border-border text-muted-foreground hover:bg-secondary"
                                     }`}
                             >
                                 <span>{s === "All" ? "All" : statusConfig[s].label}</span>
                                 <span className="h-5 w-5 rounded-full bg-current/10 flex items-center justify-center text-xs font-bold">
                                     {count}
                                 </span>
-                            </div>
+                            </button>
                         );
                     })}
                     <Link href="/tenant/browse" className="ml-auto">
@@ -100,70 +107,112 @@ export default function BookingsPage() {
                     </Link>
                 </div>
 
+                {/* Loading */}
+                {loading && (
+                    <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4">
+                        <Loader2 className="h-10 w-10 animate-spin text-accent" />
+                        <p className="text-muted-foreground text-sm">Loading your bookings…</p>
+                    </div>
+                )}
+
+                {/* Error */}
+                {!loading && error && (
+                    <div className="glass-card rounded-2xl p-8 text-center space-y-3">
+                        <AlertCircle className="h-10 w-10 text-red-500 mx-auto" />
+                        <h3 className="font-display font-semibold text-foreground">Failed to load bookings</h3>
+                        <p className="text-sm text-muted-foreground">{error}</p>
+                        <Button variant="outline" onClick={() => window.location.reload()}>
+                            Try Again
+                        </Button>
+                    </div>
+                )}
+
+                {/* Empty state */}
+                {!loading && !error && filtered.length === 0 && (
+                    <div className="glass-card rounded-2xl p-8 text-center space-y-3">
+                        <CalendarX2 className="h-10 w-10 text-muted-foreground mx-auto" />
+                        <h3 className="font-display font-semibold text-foreground">
+                            {filter === "All" ? "No bookings yet" : `No ${statusConfig[filter].label.toLowerCase()} bookings`}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                            {filter === "All"
+                                ? "Browse available properties to make your first booking."
+                                : "Try selecting a different filter above."}
+                        </p>
+                        {filter === "All" && (
+                            <Link href="/tenant/browse">
+                                <Button className="bg-accent text-accent-foreground hover:bg-accent/90 mt-2">
+                                    Browse Properties
+                                </Button>
+                            </Link>
+                        )}
+                    </div>
+                )}
+
                 {/* Bookings list */}
-                <div className="space-y-4">
-                    {mockBookings.map((booking, i) => {
-                        const s = statusConfig[booking.status];
-                        const StatusIcon = s.icon;
-                        const nights = Math.round(
-                            (new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime()) /
-                            (1000 * 60 * 60 * 24)
-                        );
-                        return (
-                            <motion.div
-                                key={booking.id}
-                                custom={i}
-                                variants={fadeUp}
-                                initial="hidden"
-                                animate="show"
-                            >
-                                <Link href={`/tenant/bookings/${booking.id}`}>
-                                    <div className="glass-card rounded-2xl overflow-hidden flex gap-0 hover:shadow-lg transition-shadow cursor-pointer group">
-                                        <div className="w-28 sm:w-36 shrink-0 relative overflow-hidden">
-                                            <img
-                                                src={booking.image}
-                                                alt={booking.unit}
-                                                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            />
-                                        </div>
-                                        <div className="flex-1 p-4 min-w-0">
-                                            <div className="flex items-start justify-between gap-3">
-                                                <div className="min-w-0">
-                                                    <p className="text-sm font-semibold text-foreground truncate group-hover:text-accent transition-colors">
-                                                        {booking.unit}
-                                                    </p>
-                                                    <p className="text-xs text-muted-foreground">{booking.city}</p>
-                                                </div>
-                                                <span className={`flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border shrink-0 ${s.className}`}>
-                                                    <StatusIcon className="h-3 w-3" />
-                                                    {s.label}
-                                                </span>
-                                            </div>
+                {!loading && !error && filtered.length > 0 && (
+                    <div className="space-y-4">
+                        {filtered.map((booking, i) => {
+                            const status = (booking.status as BookingStatus) || "PENDING";
+                            const s = statusConfig[status] ?? statusConfig.PENDING;
+                            const StatusIcon = s.icon;
+                            const nights = Math.round(
+                                (new Date(booking.check_out).getTime() - new Date(booking.check_in).getTime()) /
+                                (1000 * 60 * 60 * 24)
+                            );
+                            const unitName = booking.unit?.unit_name ?? `Unit ${booking.unit_id.slice(0, 8)}`;
 
-                                            <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-                                                <div className="flex items-center gap-1.5">
-                                                    <Calendar className="h-3.5 w-3.5 text-accent" />
-                                                    <span>{formatDate(booking.checkIn)} → {formatDate(booking.checkOut)}</span>
+                            return (
+                                <motion.div
+                                    key={booking.booking_id}
+                                    custom={i}
+                                    variants={fadeUp}
+                                    initial="hidden"
+                                    animate="show"
+                                >
+                                    <Link href={`/tenant/bookings/${booking.booking_id}`}>
+                                        <div className="glass-card rounded-2xl overflow-hidden flex gap-0 hover:shadow-lg transition-shadow cursor-pointer group">
+                                            <div className="flex-1 p-4 min-w-0">
+                                                <div className="flex items-start justify-between gap-3">
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-semibold text-foreground truncate group-hover:text-accent transition-colors">
+                                                            {unitName}
+                                                        </p>
+                                                        <p className="text-xs text-muted-foreground mt-0.5">
+                                                            Booking #{booking.booking_id.slice(0, 8).toUpperCase()}
+                                                        </p>
+                                                    </div>
+                                                    <span className={`flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border shrink-0 ${s.className}`}>
+                                                        <StatusIcon className="h-3 w-3" />
+                                                        {s.label}
+                                                    </span>
                                                 </div>
-                                                <span className="text-foreground/40">·</span>
-                                                <span>{nights} night{nights !== 1 ? "s" : ""}</span>
-                                            </div>
 
-                                            <div className="mt-3 flex items-center justify-between">
-                                                <span className="text-base font-bold text-foreground font-display">
-                                                    ${booking.totalPrice.toLocaleString()}
-                                                </span>
-                                                <span className="text-xs text-accent flex items-center gap-1 group-hover:gap-2 transition-all">
-                                                    View details <ArrowRight className="h-3 w-3" />
-                                                </span>
+                                                <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <Calendar className="h-3.5 w-3.5 text-accent" />
+                                                        <span>{formatDate(booking.check_in)} → {formatDate(booking.check_out)}</span>
+                                                    </div>
+                                                    <span className="text-foreground/40">·</span>
+                                                    <span>{nights} night{nights !== 1 ? "s" : ""}</span>
+                                                </div>
+
+                                                <div className="mt-3 flex items-center justify-between">
+                                                    <span className="text-base font-bold text-foreground font-display">
+                                                        ${Number(booking.total_price).toLocaleString()}
+                                                    </span>
+                                                    <span className="text-xs text-accent flex items-center gap-1 group-hover:gap-2 transition-all">
+                                                        View details <ArrowRight className="h-3 w-3" />
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        );
-                    })}
-                </div>
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </div>
     );

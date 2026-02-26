@@ -1,153 +1,44 @@
 "use client";
 
-import { use, useState, useMemo } from "react";
+import { use, useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
     ArrowLeft, Calendar, Users, MapPin, Clock, CreditCard,
     CheckCircle2, BedDouble, DollarSign, ChevronDown, ShieldCheck,
-    AlertCircle, Home,
+    AlertCircle, Home, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TenantHeader from "../../../components/TenantHeader";
+import { propertyClient, type PropertyFull, type UnitWithDetails } from "@/lib/propertyClient";
+import { bookingClient } from "@/lib/bookingClient";
+import { getAuthToken } from "@/lib/auth";
 
-/* ───── Same mock data as property detail page ───── */
-const propertiesData: Record<string, {
-    id: string; title: string; type: string; city: string; address: string;
-    price: number; rentalType: string; maxGuests: number; rating: number;
-    available: boolean; image: string;
-    landlord: { name: string; phone: string; email: string };
-    units: {
-        id: string; name: string; maxGuests: number; isActive: boolean;
-        pricingPlans: { rentalType: string; price: number; minimumStay: number }[];
-    }[];
-}> = {
-    "p-1": {
-        id: "p-1", title: "Luxury Penthouse Suite", type: "APARTMENT",
-        city: "New York", address: "500 Park Ave", price: 3500, rentalType: "MONTHLY",
-        maxGuests: 4, rating: 4.9, available: true,
-        image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80",
-        landlord: { name: "Sarah Mitchell", phone: "+1 (555) 234-5678", email: "sarah@parkaveluxury.com" },
-        units: [
-            {
-                id: "u-1a", name: "Penthouse A – Full Suite", maxGuests: 4, isActive: true,
-                pricingPlans: [
-                    { rentalType: "DAILY", price: 220, minimumStay: 2 },
-                    { rentalType: "MONTHLY", price: 3500, minimumStay: 1 },
-                    { rentalType: "YEARLY", price: 38000, minimumStay: 1 },
-                ],
-            },
-            {
-                id: "u-1b", name: "Penthouse B – Studio Wing", maxGuests: 2, isActive: true,
-                pricingPlans: [
-                    { rentalType: "DAILY", price: 150, minimumStay: 1 },
-                    { rentalType: "MONTHLY", price: 2400, minimumStay: 1 },
-                ],
-            },
-        ],
-    },
-    "p-2": {
-        id: "p-2", title: "Cozy Downtown Studio", type: "STUDIO",
-        city: "Chicago", address: "222 Wacker Dr", price: 95, rentalType: "DAILY",
-        maxGuests: 2, rating: 4.7, available: true,
-        image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
-        landlord: { name: "James Taylor", phone: "+1 (555) 876-5432", email: "james@chicagostudios.com" },
-        units: [
-            {
-                id: "u-2a", name: "Studio Unit", maxGuests: 2, isActive: true,
-                pricingPlans: [
-                    { rentalType: "DAILY", price: 95, minimumStay: 1 },
-                    { rentalType: "MONTHLY", price: 1800, minimumStay: 1 },
-                ],
-            },
-        ],
-    },
-    "p-3": {
-        id: "p-3", title: "Modern Family Villa", type: "VILLA",
-        city: "Miami", address: "88 Ocean Dr", price: 5200, rentalType: "MONTHLY",
-        maxGuests: 8, rating: 4.8, available: true,
-        image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80",
-        landlord: { name: "Maria Gonzalez", phone: "+1 (555) 321-9876", email: "maria@miamiproperties.com" },
-        units: [
-            {
-                id: "u-3a", name: "Full Villa", maxGuests: 8, isActive: true,
-                pricingPlans: [
-                    { rentalType: "DAILY", price: 350, minimumStay: 3 },
-                    { rentalType: "MONTHLY", price: 5200, minimumStay: 1 },
-                    { rentalType: "YEARLY", price: 55000, minimumStay: 1 },
-                ],
-            },
-            {
-                id: "u-3b", name: "Guest Suite", maxGuests: 2, isActive: true,
-                pricingPlans: [
-                    { rentalType: "DAILY", price: 120, minimumStay: 1 },
-                    { rentalType: "MONTHLY", price: 1900, minimumStay: 1 },
-                ],
-            },
-            {
-                id: "u-3c", name: "Pool House", maxGuests: 3, isActive: false,
-                pricingPlans: [
-                    { rentalType: "DAILY", price: 180, minimumStay: 2 },
-                ],
-            },
-        ],
-    },
-    "p-4": {
-        id: "p-4", title: "Suburban Family Home", type: "HOUSE",
-        city: "Austin", address: "301 Cedar Ln", price: 2100, rentalType: "MONTHLY",
-        maxGuests: 6, rating: 4.5, available: false,
-        image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80",
-        landlord: { name: "Tom Bradley", phone: "+1 (555) 654-3210", email: "tom@austinhomes.com" },
-        units: [
-            {
-                id: "u-4a", name: "Full House", maxGuests: 6, isActive: false,
-                pricingPlans: [
-                    { rentalType: "MONTHLY", price: 2100, minimumStay: 6 },
-                    { rentalType: "YEARLY", price: 22000, minimumStay: 1 },
-                ],
-            },
-        ],
-    },
-    "p-5": {
-        id: "p-5", title: "Executive Suite Room", type: "ROOM",
-        city: "Los Angeles", address: "1 Sunset Blvd", price: 65, rentalType: "DAILY",
-        maxGuests: 1, rating: 4.6, available: true,
-        image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
-        landlord: { name: "Lisa Chen", phone: "+1 (555) 111-2233", email: "lisa@sunsetsuite.com" },
-        units: [
-            {
-                id: "u-5a", name: "Executive Room", maxGuests: 1, isActive: true,
-                pricingPlans: [
-                    { rentalType: "DAILY", price: 65, minimumStay: 1 },
-                    { rentalType: "MONTHLY", price: 1500, minimumStay: 1 },
-                ],
-            },
-        ],
-    },
-    "p-6": {
-        id: "p-6", title: "Commercial Office Space", type: "COMMERCIAL",
-        city: "San Francisco", address: "50 Market St", price: 8000, rentalType: "MONTHLY",
-        maxGuests: 20, rating: 4.4, available: true,
-        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
-        landlord: { name: "Alan Roberts", phone: "+1 (555) 999-8877", email: "alan@sfcommercial.com" },
-        units: [
-            {
-                id: "u-6a", name: "Floor 12 – Full Floor", maxGuests: 20, isActive: true,
-                pricingPlans: [
-                    { rentalType: "MONTHLY", price: 8000, minimumStay: 12 },
-                    { rentalType: "YEARLY", price: 88000, minimumStay: 1 },
-                ],
-            },
-            {
-                id: "u-6b", name: "Floor 12 – Suite A", maxGuests: 8, isActive: true,
-                pricingPlans: [
-                    { rentalType: "MONTHLY", price: 3500, minimumStay: 6 },
-                ],
-            },
-        ],
-    },
-};
+/** Decode the JWT payload without a library */
+function decodeTokenPayload(): { sub?: string; user_id?: string; exp?: number } | null {
+    const token = getAuthToken();
+    if (!token) return null;
+    try {
+        return JSON.parse(atob(token.split(".")[1]));
+    } catch {
+        return null;
+    }
+}
+
+function getUserIdFromToken(): string | null {
+    const payload = decodeTokenPayload();
+    if (!payload) return null;
+    // Check expiry — exp is in seconds
+    if (payload.exp && payload.exp * 1000 < Date.now()) return null;
+    return payload.sub ?? payload.user_id ?? null;
+}
+
+function isTokenExpired(): boolean {
+    const payload = decodeTokenPayload();
+    if (!payload?.exp) return true;
+    return payload.exp * 1000 < Date.now();
+}
 
 const SERVICE_FEE_RATE = 0.08;
 
@@ -176,18 +67,77 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
     const { propertyId } = use(params);
     const searchParams = useSearchParams();
     const preselectedUnit = searchParams.get("unit");
-    const property = propertiesData[propertyId];
 
+    /* ── Data fetching state ── */
+    const [property, setProperty] = useState<PropertyFull | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [fetchError, setFetchError] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
+
+    /* ── Form state ── */
     const [selectedUnitId, setSelectedUnitId] = useState(preselectedUnit || "");
     const [checkIn, setCheckIn] = useState(getTomorrow());
     const [checkOut, setCheckOut] = useState(getDefaultCheckout());
     const [guests, setGuests] = useState(1);
     const [paymentMethod, setPaymentMethod] = useState("credit_card");
     const [booked, setBooked] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const [errors, setErrors] = useState<string[]>([]);
 
-    /* ── Not found ── */
-    if (!property) {
+    /* ── Fetch property + user on mount ── */
+    useEffect(() => {
+        setLoading(true);
+        setFetchError(null);
+
+        // Decode user_id from JWT synchronously — no extra API call needed
+        const uid = getUserIdFromToken();
+        if (uid) setUserId(uid);
+
+        propertyClient.getById(propertyId)
+            .then((prop) => setProperty(prop))
+            .catch((err: Error) => setFetchError(err.message ?? "Failed to load property"))
+            .finally(() => setLoading(false));
+    }, [propertyId]);
+
+    /* ── All hooks MUST be called before any conditional returns ── */
+    const nights = useMemo(() => {
+        if (!checkIn || !checkOut) return 0;
+        const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime();
+        return Math.max(0, Math.round(diff / (1000 * 60 * 60 * 24)));
+    }, [checkIn, checkOut]);
+
+    /* ── Derived data (safe — no hooks below this point) ── */
+    const activeUnits = (property?.units ?? []).filter((u) => u.is_active);
+    const selectedUnit: UnitWithDetails | undefined =
+        activeUnits.find((u) => u.unit_id === selectedUnitId) || activeUnits[0];
+
+    const dailyPlan = selectedUnit?.pricingPlans.find((p) => p.rental_type === "DAILY");
+    const pricePerNight = dailyPlan ? Number(dailyPlan.price) : (selectedUnit?.pricingPlans[0] ? Number(selectedUnit.pricingPlans[0].price) : 0);
+    const minStay = dailyPlan?.minimum_stay ?? 1;
+
+    const subtotal = pricePerNight * nights;
+    const serviceFee = Math.round(subtotal * SERVICE_FEE_RATE);
+    const total = subtotal + serviceFee;
+
+    const heroImage = property && (property.images ?? []).length > 0
+        ? property.images![0].url
+        : "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80";
+
+    /* ── Loading state ── */
+    if (loading) {
+        return (
+            <div>
+                <TenantHeader title="Book a Stay" />
+                <div className="p-6 mx-auto flex flex-col items-center justify-center min-h-[60vh] gap-4">
+                    <Loader2 className="h-10 w-10 animate-spin text-accent" />
+                    <p className="text-muted-foreground text-sm">Loading booking details…</p>
+                </div>
+            </div>
+        );
+    }
+
+    /* ── Error / Not found ── */
+    if (fetchError || !property) {
         return (
             <div>
                 <TenantHeader title="Property Not Found" />
@@ -196,7 +146,9 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
                         <Home className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <h2 className="font-display text-2xl font-bold text-foreground mb-3">Property Not Found</h2>
-                    <p className="text-muted-foreground mb-6">The property you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+                    <p className="text-muted-foreground mb-6">
+                        {fetchError ?? "The property you\u0027re looking for doesn\u0027t exist or has been removed."}
+                    </p>
                     <Link href="/tenant/browse">
                         <Button variant="outline">
                             <ArrowLeft className="h-4 w-4 mr-2" /> Back to Browse
@@ -207,27 +159,7 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
         );
     }
 
-    const activeUnits = property.units.filter((u) => u.isActive);
-    const selectedUnit = activeUnits.find((u) => u.id === selectedUnitId) || activeUnits[0];
 
-    // Auto-select first unit if none selected
-    if (!selectedUnitId && activeUnits.length > 0 && selectedUnit) {
-        // We'll handle this in initial state
-    }
-
-    const dailyPlan = selectedUnit?.pricingPlans.find((p) => p.rentalType === "DAILY");
-    const pricePerNight = dailyPlan?.price ?? selectedUnit?.pricingPlans[0]?.price ?? 0;
-    const minStay = dailyPlan?.minimumStay ?? 1;
-
-    const nights = useMemo(() => {
-        if (!checkIn || !checkOut) return 0;
-        const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime();
-        return Math.max(0, Math.round(diff / (1000 * 60 * 60 * 24)));
-    }, [checkIn, checkOut]);
-
-    const subtotal = pricePerNight * nights;
-    const serviceFee = Math.round(subtotal * SERVICE_FEE_RATE);
-    const total = subtotal + serviceFee;
 
     const validate = () => {
         const errs: string[] = [];
@@ -235,17 +167,41 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
         if (!checkIn || !checkOut) errs.push("Please select check-in and check-out dates.");
         if (nights <= 0) errs.push("Check-out must be after check-in.");
         if (nights < minStay) errs.push(`Minimum stay is ${minStay} night${minStay > 1 ? "s" : ""}.`);
-        if (selectedUnit && guests > selectedUnit.maxGuests) errs.push(`Maximum ${selectedUnit.maxGuests} guests allowed.`);
+        if (selectedUnit && guests > selectedUnit.max_guests) errs.push(`Maximum ${selectedUnit.max_guests} guests allowed.`);
         if (guests < 1) errs.push("At least 1 guest required.");
-        if (!property.available) errs.push("This property is currently unavailable.");
+        if (!userId) {
+            errs.push(
+                isTokenExpired()
+                    ? "Your session has expired. Please log in again to create a booking."
+                    : "You must be logged in to create a booking."
+            );
+        }
         setErrors(errs);
         return errs.length === 0;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (validate()) {
+        if (!validate() || !selectedUnit || !userId) return;
+
+        setSubmitting(true);
+        setErrors([]);
+
+        try {
+            await bookingClient.create({
+                check_in: new Date(`${checkIn}T14:00:00`).toISOString(),
+                check_out: new Date(`${checkOut}T10:00:00`).toISOString(),
+                total_price: total,
+                status: "PENDING",
+                unit_id: selectedUnit.unit_id,
+                user_id: userId,
+            });
             setBooked(true);
+        } catch (err: unknown) {
+            const message = err instanceof Error ? err.message : "Booking failed. Please try again.";
+            setErrors([message]);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -271,10 +227,10 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
 
                         <div className="bg-secondary rounded-xl p-5 text-left space-y-3">
                             <div className="flex items-center gap-3">
-                                <img src={property.image} alt={property.title} className="h-14 w-20 rounded-lg object-cover" />
+                                <img src={heroImage} alt={property.title} className="h-14 w-20 rounded-lg object-cover" />
                                 <div>
                                     <p className="font-semibold text-foreground text-sm">{property.title}</p>
-                                    <p className="text-xs text-muted-foreground">{selectedUnit?.name}</p>
+                                    <p className="text-xs text-muted-foreground">{selectedUnit?.unit_name}</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-3 text-sm">
@@ -312,7 +268,7 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
                                     View My Bookings
                                 </Button>
                             </Link>
-                            <Link href={`/tenant/browse/${property.id}`} className="flex-1">
+                            <Link href={`/tenant/browse/${property.property_id}`} className="flex-1">
                                 <Button variant="outline" className="w-full">
                                     Back to Property
                                 </Button>
@@ -330,7 +286,7 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
 
             <div className="p-6 mx-auto space-y-6">
                 {/* Back link */}
-                <Link href={`/tenant/browse/${property.id}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors w-fit group">
+                <Link href={`/tenant/browse/${property.property_id}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors w-fit group">
                     <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
                     Back to Property
                 </Link>
@@ -339,14 +295,14 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
                 <motion.div variants={fadeUp} initial="hidden" animate="show" className="glass-card rounded-2xl overflow-hidden">
                     <div className="flex gap-0">
                         <div className="w-32 sm:w-48 shrink-0 relative overflow-hidden">
-                            <img src={property.image} alt={property.title} className="h-full w-full object-cover" />
+                            <img src={heroImage} alt={property.title} className="h-full w-full object-cover" />
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10" />
                         </div>
                         <div className="p-5 flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-3">
                                 <div className="min-w-0">
                                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-accent text-accent-foreground uppercase tracking-wide">
-                                        {property.type}
+                                        {property.property_type}
                                     </span>
                                     <h2 className="font-display text-lg font-bold text-foreground mt-1.5 truncate">{property.title}</h2>
                                     <div className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5">
@@ -392,36 +348,39 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
                                     <p className="text-sm text-muted-foreground bg-secondary rounded-xl p-4">No active units available for booking.</p>
                                 ) : (
                                     <div className="space-y-2">
-                                        {activeUnits.map((unit) => (
-                                            <label
-                                                key={unit.id}
-                                                className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${(selectedUnitId || activeUnits[0].id) === unit.id
-                                                    ? "border-accent bg-accent/5 shadow-sm"
-                                                    : "border-border/50 bg-secondary hover:border-accent/30"
-                                                    }`}
-                                            >
-                                                <input
-                                                    type="radio"
-                                                    name="unit"
-                                                    value={unit.id}
-                                                    checked={(selectedUnitId || activeUnits[0].id) === unit.id}
-                                                    onChange={() => setSelectedUnitId(unit.id)}
-                                                    className="accent-[hsl(35,85%,55%)] h-4 w-4"
-                                                />
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-semibold text-foreground">{unit.name}</p>
-                                                    <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
-                                                        <span className="flex items-center gap-1"><Users className="h-3 w-3" /> Up to {unit.maxGuests} guests</span>
-                                                        {unit.pricingPlans.find((p) => p.rentalType === "DAILY") && (
-                                                            <span className="flex items-center gap-1">
-                                                                <DollarSign className="h-3 w-3" />
-                                                                ${unit.pricingPlans.find((p) => p.rentalType === "DAILY")!.price}/night
-                                                            </span>
-                                                        )}
+                                        {activeUnits.map((unit) => {
+                                            const unitDailyPlan = unit.pricingPlans.find((p) => p.rental_type === "DAILY");
+                                            return (
+                                                <label
+                                                    key={unit.unit_id}
+                                                    className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${(selectedUnitId || activeUnits[0].unit_id) === unit.unit_id
+                                                        ? "border-accent bg-accent/5 shadow-sm"
+                                                        : "border-border/50 bg-secondary hover:border-accent/30"
+                                                        }`}
+                                                >
+                                                    <input
+                                                        type="radio"
+                                                        name="unit"
+                                                        value={unit.unit_id}
+                                                        checked={(selectedUnitId || activeUnits[0].unit_id) === unit.unit_id}
+                                                        onChange={() => setSelectedUnitId(unit.unit_id)}
+                                                        className="accent-[hsl(35,85%,55%)] h-4 w-4"
+                                                    />
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-semibold text-foreground">{unit.unit_name}</p>
+                                                        <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                                                            <span className="flex items-center gap-1"><Users className="h-3 w-3" /> Up to {unit.max_guests} guests</span>
+                                                            {unitDailyPlan && (
+                                                                <span className="flex items-center gap-1">
+                                                                    <DollarSign className="h-3 w-3" />
+                                                                    ${Number(unitDailyPlan.price).toLocaleString()}/night
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </label>
-                                        ))}
+                                                </label>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </motion.div>
@@ -467,7 +426,7 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
                                                 onChange={(e) => setGuests(Number(e.target.value))}
                                                 className="w-full h-11 px-4 rounded-xl bg-secondary border border-border/50 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-accent/40 transition"
                                             >
-                                                {Array.from({ length: selectedUnit?.maxGuests ?? 1 }, (_, i) => (
+                                                {Array.from({ length: selectedUnit?.max_guests ?? 1 }, (_, i) => (
                                                     <option key={i + 1} value={i + 1}>{i + 1} Guest{i > 0 ? "s" : ""}</option>
                                                 ))}
                                             </select>
@@ -546,7 +505,7 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
                                         <div className="bg-secondary rounded-xl p-3 flex items-center gap-3">
                                             <BedDouble className="h-4 w-4 text-accent shrink-0" />
                                             <div className="min-w-0">
-                                                <p className="text-sm font-medium text-foreground truncate">{selectedUnit.name}</p>
+                                                <p className="text-sm font-medium text-foreground truncate">{selectedUnit.unit_name}</p>
                                                 <p className="text-xs text-muted-foreground">{property.title}</p>
                                             </div>
                                         </div>
@@ -569,16 +528,21 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
 
                                     <Button
                                         type="submit"
-                                        disabled={!property.available || activeUnits.length === 0}
+                                        disabled={activeUnits.length === 0 || submitting}
                                         className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12 font-semibold text-sm rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <CheckCircle2 className="h-4 w-4 mr-2" />
-                                        Confirm Booking
+                                        {submitting ? (
+                                            <>
+                                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                                Submitting…
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                                Confirm Booking
+                                            </>
+                                        )}
                                     </Button>
-
-                                    {!property.available && (
-                                        <p className="text-xs text-red-600 text-center">This property is currently unavailable for booking.</p>
-                                    )}
                                 </div>
 
                                 {/* Trust badge */}
@@ -594,7 +558,7 @@ export default function BookPage({ params }: { params: Promise<{ propertyId: str
                                         { icon: Clock, text: "Check-in from 2:00 PM, check-out by 11:00 AM" },
                                         { icon: AlertCircle, text: "Free cancellation up to 48 hours before check-in" },
                                         { icon: ShieldCheck, text: "Security deposit may be required at check-in" },
-                                        { icon: Users, text: `Maximum ${selectedUnit?.maxGuests ?? "–"} guests per unit` },
+                                        { icon: Users, text: `Maximum ${selectedUnit?.max_guests ?? "–"} guests per unit` },
                                     ].map((policy, i) => (
                                         <div key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground">
                                             <policy.icon className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
