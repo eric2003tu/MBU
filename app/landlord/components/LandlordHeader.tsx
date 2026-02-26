@@ -1,7 +1,9 @@
 "use client";
 
-import { Bell, Menu } from "lucide-react";
+import { Bell, Menu, LogOut, Settings, User, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useLandlordLayout } from "../layout";
 
@@ -12,14 +14,23 @@ interface LandlordHeaderProps {
 
 export default function LandlordHeader({ title, subtitle }: LandlordHeaderProps) {
     const [notifOpen, setNotifOpen] = useState(false);
-    const { user } = useAuth();
+    const [profileOpen, setProfileOpen] = useState(false);
+    const { user, logout } = useAuth();
     const { openMenu } = useLandlordLayout();
+    const router = useRouter();
 
     const initials = user?.full_name
         ? user.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
         : "L";
 
     const unreadCount = 4;
+
+    const handleLogout = async () => {
+        await logout();
+        setProfileOpen(false);
+        router.push("/");
+        router.refresh();
+    };
 
     return (
         <header className="h-16 flex items-center justify-between px-4 sm:px-6 bg-background/80 backdrop-blur-sm border-b border-border/50 shrink-0 sticky top-0 z-30 shadow-sm">
@@ -87,26 +98,69 @@ export default function LandlordHeader({ title, subtitle }: LandlordHeaderProps)
                     )}
                 </div>
 
-                {/* User avatar */}
-                <div className="flex items-center gap-2.5">
-                    <div className="h-9 w-9 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent text-xs font-bold shrink-0">
-                        {initials}
-                    </div>
-                    <div className="hidden sm:block">
-                        {user?.full_name ? (
-                            <>
-                                <p className="text-sm font-semibold text-foreground leading-none truncate max-w-[140px]">
-                                    {user.full_name}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-0.5">Landlord</p>
-                            </>
-                        ) : (
-                            <div className="space-y-1">
-                                <div className="h-3 w-24 rounded bg-muted animate-pulse" />
-                                <div className="h-2.5 w-16 rounded bg-muted animate-pulse" />
+                {/* User avatar with dropdown */}
+                <div className="relative">
+                    <button
+                        onClick={() => setProfileOpen((o) => !o)}
+                        className="flex items-center gap-2.5 rounded-xl px-1.5 py-1 hover:bg-secondary/50 transition-colors cursor-pointer"
+                    >
+                        <div className="h-9 w-9 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent text-xs font-bold shrink-0">
+                            {initials}
+                        </div>
+                        <div className="hidden sm:block">
+                            {user?.full_name ? (
+                                <>
+                                    <p className="text-sm font-semibold text-foreground leading-none truncate max-w-[140px] text-left">
+                                        {user.full_name}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground mt-0.5 text-left">Landlord</p>
+                                </>
+                            ) : (
+                                <div className="space-y-1">
+                                    <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+                                    <div className="h-2.5 w-16 rounded bg-muted animate-pulse" />
+                                </div>
+                            )}
+                        </div>
+                        <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform hidden sm:block ${profileOpen ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {profileOpen && (
+                        <>
+                            <div className="fixed inset-0 z-10" onClick={() => setProfileOpen(false)} />
+                            <div className="absolute right-0 top-full mt-2 w-52 z-20 glass-card rounded-xl shadow-lg py-1 overflow-hidden">
+                                <div className="px-4 py-3 border-b border-border/50">
+                                    <p className="text-sm font-semibold text-foreground truncate">{user?.full_name ?? "Account"}</p>
+                                    <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                                </div>
+                                <Link
+                                    href="/landlord/profile"
+                                    onClick={() => setProfileOpen(false)}
+                                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                                >
+                                    <User className="h-4 w-4" />
+                                    Profile
+                                </Link>
+                                <Link
+                                    href="/landlord/settings"
+                                    onClick={() => setProfileOpen(false)}
+                                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                                >
+                                    <Settings className="h-4 w-4" />
+                                    Settings
+                                </Link>
+                                <div className="border-t border-border/50">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+                                    >
+                                        <LogOut className="h-4 w-4" />
+                                        Sign out
+                                    </button>
+                                </div>
                             </div>
-                        )}
-                    </div>
+                        </>
+                    )}
                 </div>
             </div>
         </header>

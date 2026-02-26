@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, Home, Search, User, LogOut, ChevronDown } from "lucide-react";
+import { Menu, X, Home, Search, User, LogOut, ChevronDown, LayoutDashboard, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { ROLE_HOME } from "@/lib/auth";
 
 const Navbar = () => {
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -13,6 +14,10 @@ const Navbar = () => {
     const pathname = usePathname();
     const router = useRouter();
     const { authenticated, user, loading, logout } = useAuth();
+
+    const dashboardPath = user?.role ? ROLE_HOME[user.role] : null;
+    const profilePath = user?.role ? `${ROLE_HOME[user.role]}/profile` : null;
+    const settingsPath = user?.role ? `${ROLE_HOME[user.role]}/settings` : null;
 
     const links = [
         { href: "/", label: "Home" },
@@ -53,6 +58,15 @@ const Navbar = () => {
                             {link.label}
                         </Link>
                     ))}
+                    {authenticated && dashboardPath && (
+                        <Link
+                            href={dashboardPath}
+                            className={`text-sm font-medium transition-colors hover:text-accent flex items-center gap-1.5 ${pathname.startsWith(dashboardPath) ? "text-accent" : "text-muted-foreground"}`}
+                        >
+                            <LayoutDashboard className="h-3.5 w-3.5" />
+                            Dashboard
+                        </Link>
+                    )}
                 </div>
 
                 {/* Desktop right actions */}
@@ -91,13 +105,45 @@ const Navbar = () => {
                                             <p className="text-sm font-semibold text-foreground truncate">{user?.full_name ?? "Account"}</p>
                                             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                                         </div>
-                                        <button
-                                            onClick={handleLogout}
-                                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
-                                        >
-                                            <LogOut className="h-4 w-4" />
-                                            Sign out
-                                        </button>
+                                        {dashboardPath && (
+                                            <Link
+                                                href={dashboardPath}
+                                                onClick={() => setUserMenuOpen(false)}
+                                                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                                            >
+                                                <LayoutDashboard className="h-4 w-4" />
+                                                Dashboard
+                                            </Link>
+                                        )}
+                                        {profilePath && (
+                                            <Link
+                                                href={profilePath}
+                                                onClick={() => setUserMenuOpen(false)}
+                                                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                                            >
+                                                <User className="h-4 w-4" />
+                                                Profile
+                                            </Link>
+                                        )}
+                                        {settingsPath && (
+                                            <Link
+                                                href={settingsPath}
+                                                onClick={() => setUserMenuOpen(false)}
+                                                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+                                            >
+                                                <Settings className="h-4 w-4" />
+                                                Settings
+                                            </Link>
+                                        )}
+                                        <div className="border-t border-border/50">
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-colors"
+                                            >
+                                                <LogOut className="h-4 w-4" />
+                                                Sign out
+                                            </button>
+                                        </div>
                                     </div>
                                 </>
                             )}
@@ -134,11 +180,26 @@ const Navbar = () => {
 
                     <div className="pt-2 border-t border-border">
                         {authenticated ? (
-                            <div className="space-y-2">
+                            <div className="space-y-1">
                                 <div className="px-1 py-2">
                                     <p className="text-sm font-semibold text-foreground">{user?.full_name ?? "Account"}</p>
                                     <p className="text-xs text-muted-foreground">{user?.email}</p>
                                 </div>
+                                {dashboardPath && (
+                                    <Link href={dashboardPath} onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent py-2 transition-colors">
+                                        <LayoutDashboard className="h-4 w-4" /> Dashboard
+                                    </Link>
+                                )}
+                                {profilePath && (
+                                    <Link href={profilePath} onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent py-2 transition-colors">
+                                        <User className="h-4 w-4" /> Profile
+                                    </Link>
+                                )}
+                                {settingsPath && (
+                                    <Link href={settingsPath} onClick={() => setMobileOpen(false)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent py-2 transition-colors">
+                                        <Settings className="h-4 w-4" /> Settings
+                                    </Link>
+                                )}
                                 <button
                                     onClick={() => { handleLogout(); setMobileOpen(false); }}
                                     className="w-full flex items-center gap-2 text-sm text-muted-foreground hover:text-destructive py-2 transition-colors"
