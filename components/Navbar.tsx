@@ -100,7 +100,7 @@ const Navbar = () => {
                                 <>
                                     {/* Backdrop */}
                                     <div className="fixed inset-0 z-10" onClick={() => setUserMenuOpen(false)} />
-                                    <div className="absolute right-0 top-full mt-2 w-52 z-20 glass-card rounded-xl shadow-lg py-1 overflow-hidden">
+                                    <div className="absolute right-0 top-full mt-2 w-52 z-20 bg-card border border-border rounded-xl shadow-lg py-1 overflow-hidden">
                                         <div className="px-4 py-3 border-b border-border/50">
                                             <p className="text-sm font-semibold text-foreground truncate">{user?.full_name ?? "Account"}</p>
                                             <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
