@@ -30,7 +30,6 @@ const fadeUp = {
     show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" as const } },
 };
 
-/** Returns true if the user has an auth_token cookie */
 function isLoggedIn(): boolean {
     if (typeof document === "undefined") return false;
     return /(?:^|;\s*)auth_token=/.test(document.cookie);
@@ -50,20 +49,13 @@ export default function PropertyDetailPage({ params }: Props) {
     const [saved, setSaved] = useState(false);
     const [shared, setShared] = useState(false);
 
-    /* ── Login-gated booking handler ── */
     const handleBook = useCallback((unitId: string) => {
-        if (!isLoggedIn()) {
-            router.push(`/login?next=/property/${id}`);
-            return;
-        }
+        if (!isLoggedIn()) { router.push(`/login?next=/property/${id}`); return; }
         router.push(`/tenant/browse/${id}/book?unit=${unitId}`);
     }, [id, router]);
 
     const handleLease = useCallback((unitId: string) => {
-        if (!isLoggedIn()) {
-            router.push(`/login?next=/property/${id}`);
-            return;
-        }
+        if (!isLoggedIn()) { router.push(`/login?next=/property/${id}`); return; }
         router.push(`/tenant/leases?unit=${unitId}`);
     }, [id, router]);
 
@@ -83,7 +75,6 @@ export default function PropertyDetailPage({ params }: Props) {
             .finally(() => setLoading(false));
     }, [id]);
 
-    /* ── Loading ── */
     if (loading) {
         return (
             <div className="min-h-screen bg-background">
@@ -97,7 +88,6 @@ export default function PropertyDetailPage({ params }: Props) {
         );
     }
 
-    /* ── Error ── */
     if (error || !property) {
         return (
             <div className="min-h-screen bg-background">
@@ -142,10 +132,7 @@ export default function PropertyDetailPage({ params }: Props) {
                         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
                             <span className="text-white/60 text-sm">{activeImage + 1} / {allImages.length}</span>
                             <p className="text-white font-medium text-sm truncate max-w-sm">{property.title}</p>
-                            <button
-                                onClick={() => setLightboxOpen(false)}
-                                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                            >
+                            <button onClick={() => setLightboxOpen(false)} className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
                                 <X className="h-5 w-5 text-white" />
                             </button>
                         </div>
@@ -187,64 +174,66 @@ export default function PropertyDetailPage({ params }: Props) {
                 )}
             </AnimatePresence>
 
-            {/* ── Page body — matches tenant/browse/[propertyId] layout ── */}
-            <div className="pt-20 pb-16">
-                <div className="p-6 mx-auto space-y-6">
+            {/* ── Page body ── */}
+            <div className="pt-16 pb-16">
+
+                {/* ── Hero Image — full viewport width ── */}
+                <motion.div variants={fadeUp} initial="hidden" animate="show">
+                    <div
+                        className="relative h-[52vh] overflow-hidden cursor-pointer group"
+                        onClick={() => setLightboxOpen(true)}
+                    >
+                        <img
+                            src={allImages[activeImage]}
+                            alt={property.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
+                        {/* Badges */}
+                        <div className="absolute top-4 left-4 flex gap-2">
+                            <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-accent text-accent-foreground uppercase tracking-wide shadow-lg">
+                                {property.property_type}
+                            </span>
+                            {property.landlord?.status === "APPROVED" && (
+                                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-green-500 text-white shadow-lg flex items-center gap-1">
+                                    <ShieldCheck className="h-3 w-3" /> Verified
+                                </span>
+                            )}
+                        </div>
+
+                        {/* View photos button */}
+                        <button
+                            className="absolute bottom-4 right-4 text-xs font-semibold text-white bg-black/40 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full hover:bg-black/60 transition-all flex items-center gap-2"
+                            onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); }}
+                        >
+                            <Eye className="h-3.5 w-3.5" />
+                            View all {allImages.length} photos
+                        </button>
+                    </div>
+
+                    {/* Thumbnail strip — full width */}
+                    <div className="flex gap-1 p-2 overflow-x-auto border-b border-border bg-background">
+                        {allImages.map((img, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setActiveImage(i)}
+                                className={`h-16 w-24 shrink-0 rounded-lg overflow-hidden transition-all ${i === activeImage ? "ring-2 ring-accent" : "opacity-60 hover:opacity-100"}`}
+                            >
+                                <img src={img} alt="" className="w-full h-full object-cover" />
+                            </button>
+                        ))}
+                    </div>
+                </motion.div>
+
+                {/* ── Constrained content ── */}
+                <div className="p-6 max-w-7xl mx-auto space-y-6 mt-4">
 
                     {/* Back link */}
                     <Link href="/properties" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors w-fit group">
                         <ArrowLeft className="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" />
                         Back to Properties
                     </Link>
-
-                    {/* ── Hero Image ── */}
-                    <motion.div variants={fadeUp} initial="hidden" animate="show" className="glass-card rounded-2xl overflow-hidden">
-                        <div
-                            className="relative h-64 sm:h-80 overflow-hidden cursor-pointer group"
-                            onClick={() => setLightboxOpen(true)}
-                        >
-                            <img
-                                src={allImages[activeImage]}
-                                alt={property.title}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-
-                            {/* Badges */}
-                            <div className="absolute top-4 left-4 flex gap-2">
-                                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-accent text-accent-foreground uppercase tracking-wide shadow-lg">
-                                    {property.property_type}
-                                </span>
-                                {property.landlord?.status === "APPROVED" && (
-                                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-green-500 text-white shadow-lg flex items-center gap-1">
-                                        <ShieldCheck className="h-3 w-3" /> Verified
-                                    </span>
-                                )}
-                            </div>
-
-                            {/* View photos */}
-                            <button
-                                className="absolute bottom-4 right-4 text-xs font-semibold text-white bg-black/40 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full hover:bg-black/60 transition-all flex items-center gap-2"
-                                onClick={(e) => { e.stopPropagation(); setLightboxOpen(true); }}
-                            >
-                                <Eye className="h-3.5 w-3.5" />
-                                View all {allImages.length} photos
-                            </button>
-                        </div>
-
-                        {/* Thumbnail strip */}
-                        <div className="flex gap-1 p-2 overflow-x-auto">
-                            {allImages.map((img, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setActiveImage(i)}
-                                    className={`h-16 w-24 shrink-0 rounded-lg overflow-hidden transition-all ${i === activeImage ? "ring-2 ring-accent" : "opacity-60 hover:opacity-100"}`}
-                                >
-                                    <img src={img} alt="" className="w-full h-full object-cover" />
-                                </button>
-                            ))}
-                        </div>
-                    </motion.div>
 
                     {/* ── Title + Quick Stats ── */}
                     <motion.div variants={fadeUp} initial="hidden" animate="show" className="space-y-4">
@@ -302,7 +291,7 @@ export default function PropertyDetailPage({ params }: Props) {
                         </div>
                     </motion.div>
 
-                    {/* ── Login notice banner (shown only to guests) ── */}
+                    {/* ── Login notice banner ── */}
                     {!loggedIn && (
                         <motion.div
                             variants={fadeUp} initial="hidden" animate="show"
@@ -325,8 +314,10 @@ export default function PropertyDetailPage({ params }: Props) {
 
                     {/* ── Two-column layout ── */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* LEFT: Description + Units */}
+
+                        {/* LEFT */}
                         <div className="lg:col-span-2 space-y-6">
+
                             {/* Description */}
                             <motion.div variants={fadeUp} initial="hidden" animate="show" className="glass-card rounded-2xl p-6">
                                 <h2 className="font-display text-lg font-semibold text-foreground mb-3">About this Property</h2>
@@ -357,7 +348,6 @@ export default function PropertyDetailPage({ params }: Props) {
 
                                 {(property.units ?? []).map((unit) => (
                                     <div key={unit.unit_id} className="glass-card rounded-2xl overflow-hidden">
-                                        {/* Unit header */}
                                         <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
                                             <div className="flex items-center gap-3">
                                                 <div className="h-10 w-10 rounded-xl bg-accent/10 flex items-center justify-center">
@@ -378,28 +368,20 @@ export default function PropertyDetailPage({ params }: Props) {
                                             </span>
                                         </div>
 
-                                        {/* Pricing plans + actions */}
                                         <div className="p-5 space-y-3">
                                             {unit.pricingPlans.length > 0 ? (
                                                 <>
                                                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Pricing Plans</p>
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                                         {unit.pricingPlans.map((plan) => (
-                                                            <div
-                                                                key={plan.pricing_id}
-                                                                className="bg-secondary rounded-xl p-4 border border-border/50 hover:border-accent/30 transition-colors"
-                                                            >
+                                                            <div key={plan.pricing_id} className="bg-secondary rounded-xl p-4 border border-border/50 hover:border-accent/30 transition-colors">
                                                                 <div className="flex items-center gap-2 mb-2">
                                                                     <DollarSign className="h-3.5 w-3.5 text-accent" />
-                                                                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                                                                        {plan.rental_type}
-                                                                    </span>
+                                                                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{plan.rental_type}</span>
                                                                 </div>
                                                                 <p className="text-xl font-bold text-foreground font-display">
                                                                     ${Number(plan.price).toLocaleString()}
-                                                                    <span className="text-xs font-normal text-muted-foreground ml-1">
-                                                                        {rentalTypeLabel[plan.rental_type] ?? ""}
-                                                                    </span>
+                                                                    <span className="text-xs font-normal text-muted-foreground ml-1">{rentalTypeLabel[plan.rental_type] ?? ""}</span>
                                                                 </p>
                                                                 <div className="flex items-center gap-1 mt-1.5 text-xs text-muted-foreground">
                                                                     <Clock className="h-3 w-3" />
@@ -416,7 +398,6 @@ export default function PropertyDetailPage({ params }: Props) {
                                                 <p className="text-sm text-muted-foreground italic">No pricing plans set for this unit.</p>
                                             )}
 
-                                            {/* Action buttons — login-gated */}
                                             {unit.is_active && (
                                                 <div className="flex gap-2 pt-2">
                                                     <Button
@@ -424,24 +405,17 @@ export default function PropertyDetailPage({ params }: Props) {
                                                         className="flex-1 text-xs bg-accent text-accent-foreground hover:bg-accent/90"
                                                         onClick={() => handleBook(unit.unit_id)}
                                                     >
-                                                        {loggedIn ? (
-                                                            <><Calendar className="h-3.5 w-3.5 mr-1.5" /> Book Short-Term</>
-                                                        ) : (
-                                                            <><LogIn className="h-3.5 w-3.5 mr-1.5" /> Log in to Book</>
-                                                        )}
+                                                        {loggedIn
+                                                            ? <><Calendar className="h-3.5 w-3.5 mr-1.5" /> Book Short-Term</>
+                                                            : <><LogIn className="h-3.5 w-3.5 mr-1.5" /> Log in to Book</>
+                                                        }
                                                     </Button>
                                                     {unit.pricingPlans.some((p) => p.rental_type === "MONTHLY" || p.rental_type === "YEARLY") && (
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            className="flex-1 text-xs"
-                                                            onClick={() => handleLease(unit.unit_id)}
-                                                        >
-                                                            {loggedIn ? (
-                                                                <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5" /> Sign Lease</>
-                                                            ) : (
-                                                                <><LogIn className="h-3.5 w-3.5 mr-1.5" /> Log in to Lease</>
-                                                            )}
+                                                        <Button variant="outline" size="sm" className="flex-1 text-xs" onClick={() => handleLease(unit.unit_id)}>
+                                                            {loggedIn
+                                                                ? <><CheckCircle2 className="h-3.5 w-3.5 mr-1.5" /> Sign Lease</>
+                                                                : <><LogIn className="h-3.5 w-3.5 mr-1.5" /> Log in to Lease</>
+                                                            }
                                                         </Button>
                                                     )}
                                                 </div>
@@ -461,7 +435,6 @@ export default function PropertyDetailPage({ params }: Props) {
 
                         {/* RIGHT: Sidebar */}
                         <div className="lg:col-span-1 space-y-4">
-                            {/* Landlord card */}
                             <motion.div
                                 initial={{ opacity: 0, x: 24 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -505,18 +478,13 @@ export default function PropertyDetailPage({ params }: Props) {
                                 <Button
                                     variant="outline"
                                     className="w-full text-sm"
-                                    onClick={() => {
-                                        if (!isLoggedIn()) {
-                                            router.push(`/login?next=/property/${property.property_id}`);
-                                        }
-                                    }}
+                                    onClick={() => { if (!isLoggedIn()) router.push(`/login?next=/property/${property.property_id}`); }}
                                 >
                                     <Mail className="h-4 w-4 mr-2" />
                                     Message Landlord
                                 </Button>
                             </motion.div>
 
-                            {/* Location card */}
                             <motion.div
                                 initial={{ opacity: 0, x: 24 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -535,7 +503,6 @@ export default function PropertyDetailPage({ params }: Props) {
                                 </div>
                             </motion.div>
 
-                            {/* Trust badge */}
                             <div className="rounded-xl border border-border bg-secondary/40 px-4 py-3 flex items-center gap-3">
                                 <ShieldCheck className="h-5 w-5 text-accent shrink-0" />
                                 <p className="text-xs text-muted-foreground">This listing has been verified by PropertyHub. Your inquiry is safe and secure.</p>
